@@ -1,65 +1,101 @@
+import Link from "next/link";
 import Image from "next/image";
+import { ArrowRight } from "lucide-react";
+import { products } from "@/lib/products";
+import { ProductCard } from "@/components/product-card";
+import { Button } from "@/components/ui/button";
+
+const categories = ["Men", "Women", "Skinny", "Baggy"];
 
 export default function Home() {
+  const featured = products.filter((product) => product.isFeatured);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
+    <div>
+      <section className="relative h-[70vh] min-h-[460px] overflow-hidden">
         <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
+          src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1600&q=80"
+          alt="Denim collection banner"
+          width={1600}
+          height={1100}
           priority
+          className="h-full w-full object-cover"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 mx-auto flex max-w-7xl items-center px-4 sm:px-6 lg:px-8">
+          <div className="max-w-xl text-white">
+            <p className="text-sm uppercase tracking-[0.2em]">New Spring Denim</p>
+            <h1 className="mt-4 text-4xl font-semibold leading-tight md:text-5xl">
+              Crafted Jeans. Minimal Style.
+            </h1>
+            <p className="mt-4 text-white/80">
+              Discover clean silhouettes and premium fits inspired by urban denim culture.
+            </p>
+            <Link href="/products">
+              <Button className="mt-8">
+                Shop Collection <ArrowRight className="ml-2 size-4" />
+              </Button>
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mb-8 flex items-center justify-between">
+          <h2 className="text-2xl font-semibold">Featured Products</h2>
+          <Link href="/products" className="text-sm text-muted-foreground hover:text-foreground">
+            View all
+          </Link>
+        </div>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {featured.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+        <h2 className="mb-8 text-2xl font-semibold">Shop by Category</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {categories.map((category) => (
+            <Link
+              key={category}
+              href={`/products?category=${category}`}
+              className="rounded-xl border bg-muted/30 p-6 text-center text-lg font-medium transition hover:bg-muted"
+            >
+              {category}
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+        <div className="rounded-2xl bg-blue-950 px-6 py-12 text-white md:px-12">
+          <p className="text-sm uppercase tracking-[0.2em] text-white/70">Limited Time</p>
+          <h2 className="mt-3 text-3xl font-semibold">Up to 30% Off Denim Essentials</h2>
+          <p className="mt-3 text-white/80">Apply code DENIM30 at checkout for selected styles.</p>
+          <Link href="/products">
+            <Button variant="secondary" className="mt-6">
+              Grab the Deal
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-4 pb-20 sm:px-6">
+        <div className="rounded-2xl border p-8 text-center">
+          <h2 className="text-2xl font-semibold">Join Our Newsletter</h2>
+          <p className="mt-2 text-muted-foreground">Get product drops, styling tips, and exclusive offers.</p>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="h-10 flex-1 rounded-md border bg-background px-3 text-sm"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <Button>Subscribe</Button>
+          </div>
         </div>
-      </main>
+      </section>
     </div>
   );
 }
