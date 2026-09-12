@@ -1,0 +1,58 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper: check if user is admin
+    function isAdmin() {
+      return request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Helper: check if user owns the resource
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    // Products: Public read, Admin write
+    match /products/{productId} {
+      allow read: if true; // Public can read products
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Categories: Public read, Admin write
+    match /categories/{categoryId} {
+      allow read: if true; // Public can read categories
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Customers: Own data only (read/write), Admin can do all
+    match /customers/{customerId} {
+      allow read: if isOwner(customerId) || isAdmin();
+      allow create: if isOwner(customerId) || isAdmin();
+      allow update: if isOwner(customerId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Orders: Own orders only, Admin can do all
+    match /orders/{orderId} {
+      allow read: if isOwner(resource.data.customerId) || isAdmin();
+      allow create: if isAdmin()
+        || (request.auth != null && request.resource.data.customerId == request.auth.uid)
+        || request.resource.data.customerId.matches('guest-.*');
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Settings: Public read (for site config), Admin write
+    match /settings/{settingId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Users collection: Users can read their own profile, Admins can read all
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId); // Self-registration
+      allow update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+  }
+}

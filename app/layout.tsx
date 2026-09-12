@@ -2,9 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/components/providers/app-providers";
-import { Navbar } from "@/components/navbar";
-import { Footer } from "@/components/footer";
-import { WhatsAppChatButton } from "@/components/whatsapp-chat-button";
+import { StoreShell } from "@/components/store-shell";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DenimCo - Modern Jeans Store",
-  description: "Professional and responsive eCommerce app for premium jeans.",
+  title: "Clothhub - Pakistani Stitched Clothes",
+  description: "Your trusted online store for premium Pakistani stitched Shalwar Kameez, Kurta, Dupatta and more.",
 };
 
 export default function RootLayout({
@@ -31,12 +29,9 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <AppProviders>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <WhatsAppChatButton />
-          <Footer />
+          <StoreShell>{children}</StoreShell>
         </AppProviders>
       </body>
     </html>

@@ -1,18 +1,32 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ProductCard } from "@/components/product-card";
 import { ProductsFilter } from "@/components/products-filter";
-import { ProductColor, products } from "@/lib/products";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Product, ProductColor } from "@/lib/products";
+import { fetchStoreProducts } from "@/lib/storefront-products";
 
 export default function ProductsPage() {
   const searchParams = useSearchParams();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState(searchParams.get("category") ?? "all");
   const [color, setColor] = useState("all");
-  const [maxPrice, setMaxPrice] = useState(120);
+  const [maxPrice, setMaxPrice] = useState(10000);
   const [sort, setSort] = useState("newest");
+
+  useEffect(() => {
+    async function loadProducts() {
+      const data = await fetchStoreProducts();
+      setProducts(data);
+      setLoading(false);
+    }
+
+    loadProducts();
+  }, []);
 
   const filteredProducts = useMemo(() => {
     const filtered = products.filter((product) => {
@@ -30,11 +44,11 @@ export default function ProductsPage() {
       return filtered.sort((a, b) => b.price - a.price);
     }
     return filtered.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
-  }, [category, color, maxPrice, query, sort]);
+  }, [category, color, maxPrice, products, query, sort]);
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <h1 className="mb-8 text-3xl font-semibold">All Jeans</h1>
+      <h1 className="mb-8 text-3xl font-semibold">All Clothes</h1>
       <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
         <aside className="lg:sticky lg:top-24 lg:self-start">
           <ProductsFilter
@@ -53,9 +67,13 @@ export default function ProductsPage() {
           />
         </aside>
         <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          {loading
+            ? Array.from({ length: 6 }).map((_, index) => (
+                <Skeleton key={index} className="h-96 w-full" />
+              ))
+            : filteredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
         </div>
       </div>
     </section>

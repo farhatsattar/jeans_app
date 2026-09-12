@@ -23,7 +23,17 @@ export function Navbar() {
     <header className="sticky top-0 z-50 border-b bg-background/90 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="text-xl font-semibold tracking-tight">
-          Denim<span className="text-blue-700">Co</span>
+          Cloth<span className="text-blue-700">Hub
+
+
+
+
+
+
+
+
+            
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">

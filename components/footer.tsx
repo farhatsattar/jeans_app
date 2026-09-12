@@ -5,18 +5,18 @@ export function Footer() {
     <footer className="border-t bg-muted/30">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-4 lg:px-8">
         <div>
-          <h3 className="font-semibold">DenimCo</h3>
+          <h3 className="font-semibold">Clothhub</h3>
           <p className="mt-2 text-sm text-muted-foreground">
-            Minimal premium jeans for everyday wear.
+            Premium Pakistani stitched clothes for every occasion.
           </p>
         </div>
         <div className="text-sm">
           <h4 className="font-medium">Shop</h4>
           <ul className="mt-3 space-y-2 text-muted-foreground">
-            <li>Men</li>
-            <li>Women</li>
-            <li>Skinny</li>
-            <li>Baggy</li>
+            <li>Shalwar Kameez</li>
+            <li>Kurta</li>
+            <li>Dupatta</li>
+            <li>Trouser</li>
           </ul>
         </div>
         <div className="text-sm">

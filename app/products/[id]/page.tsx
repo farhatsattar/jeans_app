@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { notFound, useParams } from "next/navigation";
-import { Star } from "lucide-react";
-import { products } from "@/lib/products";
+import { Loader2, Star } from "lucide-react";
+import { Product } from "@/lib/products";
+import { fetchStoreProduct } from "@/lib/storefront-products";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useShopStore } from "@/store/use-shop-store";
@@ -12,10 +13,30 @@ import { toast } from "sonner";
 
 export default function ProductDetailPage() {
   const params = useParams<{ id: string }>();
-  const product = useMemo(() => products.find((item) => item.id === params.id), [params.id]);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
   const addToCart = useShopStore((state) => state.addToCart);
   const [selectedImage, setSelectedImage] = useState(0);
   const [size, setSize] = useState("M");
+
+  useEffect(() => {
+    async function loadProduct() {
+      const data = await fetchStoreProduct(params.id);
+      setProduct(data);
+      setSize(data?.sizes[0] ?? "M");
+      setLoading(false);
+    }
+
+    loadProduct();
+  }, [params.id]);
+
+  if (loading) {
+    return (
+      <div className="flex h-96 items-center justify-center">
+        <Loader2 className="size-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   if (!product) return notFound();
 

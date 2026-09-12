@@ -22,7 +22,7 @@ export function ProductCard({ product }: { product: Product }) {
             alt={product.name}
             width={800}
             height={900}
-            className="h-72 w-full object-cover"
+            className="h-72 w-full object-contain"
           />
         </Link>
         <div className="space-y-3 p-4">

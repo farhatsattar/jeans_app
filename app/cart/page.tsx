@@ -16,7 +16,7 @@ export default function CartPage() {
     return (
       <section className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6">
         <h1 className="text-3xl font-semibold">Your cart is empty</h1>
-        <p className="mt-3 text-muted-foreground">Add premium denim pieces to continue.</p>
+        <p className="mt-3 text-muted-foreground">Add premium Pakistani clothes to continue.</p>
         <Link href="/products">
           <Button className="mt-6">Go to Shop</Button>
         </Link>
