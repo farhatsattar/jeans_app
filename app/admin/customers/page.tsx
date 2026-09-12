@@ -74,7 +74,7 @@ export default function CustomersPage() {
       header: "Actions",
       className: "w-20",
       render: (customer: Customer) => (
-        <Button variant="ghost" size="icon-sm" asChild>
+        <Button variant="ghost" size="icon" asChild>
           <Link href={`/admin/customers/${customer.id}`}>
             <Eye className="size-4" />
           </Link>

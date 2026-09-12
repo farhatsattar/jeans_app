@@ -154,14 +154,14 @@ export default function CategoriesPage() {
                   <div className="flex gap-1">
                     <Button
                       variant="ghost"
-                      size="icon-sm"
+                      size="icon"
                       onClick={() => openEditForm(category)}
                     >
                       <Edit className="size-4" />
                     </Button>
                     <Button
                       variant="ghost"
-                      size="icon-sm"
+                      size="icon"
                       onClick={() => setDeleteId(category.id)}
                     >
                       <Trash2 className="size-4 text-red-500" />

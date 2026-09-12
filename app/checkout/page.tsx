@@ -206,7 +206,7 @@ export default function CheckoutPage() {
             type="email"
             placeholder="you@example.com"
             defaultValue={
-              auth.currentUser?.email ?? ""
+              auth?.currentUser?.email ?? ""
             }
             required
           />
