@@ -12,9 +12,26 @@ export function FeaturedProducts() {
 
   useEffect(() => {
     async function loadProducts() {
-      const data = await fetchStoreProducts();
-      setProducts(data.filter((product) => product.isFeatured).slice(0, 6));
-      setLoading(false);
+      try {
+        const data = await fetchStoreProducts();
+
+        console.log("STORE PRODUCTS:", data);
+        console.log(
+          "FEATURED PRODUCTS:",
+          data.filter((product) => product.isFeatured === true)
+        );
+
+        setProducts(
+          data
+            .filter((product) => product.isFeatured === true)
+            .slice(0, 6)
+        );
+      } catch (error) {
+        console.error("Failed to load featured products:", error);
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
     }
 
     loadProducts();
@@ -26,6 +43,16 @@ export function FeaturedProducts() {
         {Array.from({ length: 3 }).map((_, index) => (
           <Skeleton key={index} className="h-96 w-full" />
         ))}
+      </div>
+    );
+  }
+
+  if (products.length === 0) {
+    return (
+      <div className="rounded-xl border p-8 text-center">
+        <p className="text-muted-foreground">
+          No featured products available right now.
+        </p>
       </div>
     );
   }

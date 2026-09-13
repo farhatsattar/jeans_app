@@ -18,7 +18,7 @@ export function ProductCard({ product }: { product: Product }) {
       <div className="overflow-hidden rounded-xl border bg-card">
         <Link href={`/products/${product.id}`}>
           <Image
-            src={product.images[0]}
+            src={product.images[0] || "/images/image.jpg"}
             alt={product.name}
             width={800}
             height={900}
@@ -28,7 +28,7 @@ export function ProductCard({ product }: { product: Product }) {
         <div className="space-y-3 p-4">
           <div className="flex items-center justify-between">
             <h3 className="font-medium">{product.name}</h3>
-            <p className="font-semibold">${product.price}</p>
+            <p className="font-semibold">Rs.{product.price.toLocaleString()}</p>
           </div>
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <span>{product.category}</span>

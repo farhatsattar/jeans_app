@@ -7,13 +7,17 @@ function toStoreProduct(product: AdminProduct): StoreProduct {
   const isNew =
     Date.now() - createdAt.getTime() < 1000 * 60 * 60 * 24 * 30;
 
+  const validImages = product.images.filter(
+    (image): image is string => Boolean(image?.trim())
+  );
+
   return {
     id: product.id,
     name: product.name,
     category: product.category,
     price: product.discountPrice ?? product.price,
     description: product.description,
-    images: product.images.length > 0 ? product.images : ["/images/image.jpg"],
+    images: validImages.length > 0 ? validImages : ["/images/image.jpg"],
     sizes: product.sizes,
     colors: product.colors,
     rating: 4.5,
