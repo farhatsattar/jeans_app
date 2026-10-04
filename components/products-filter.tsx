@@ -23,10 +23,12 @@ export function ProductsFilter({ query, category, color, maxPrice, sort, onChang
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All Categories</SelectItem>
-          <SelectItem value="Shalwar Kameez">Shalwar Kameez</SelectItem>
-          <SelectItem value="Kurta">Kurta</SelectItem>
-          <SelectItem value="Dupatta">Dupatta</SelectItem>
-          <SelectItem value="Trouser">Trouser</SelectItem>
+          <SelectItem value="Winter Collection">Winter Collection</SelectItem>
+          <SelectItem value="Cotton Elegant Embroidery Suit">Cotton Elegant Embroidery Suit</SelectItem>
+          <SelectItem value="Jeans / Trousers">Jeans / Trousers</SelectItem>
+          <SelectItem value="Fancy Wear">Fancy Wear</SelectItem>
+          <SelectItem value="Jewelry">Jewelry</SelectItem>
+          <SelectItem value="Handbags / Purse">Handbags / Purse</SelectItem>
         </SelectContent>
       </Select>
       <Select value={color} onValueChange={(value) => onChange("color", value ?? "all")}>
@@ -41,6 +43,7 @@ export function ProductsFilter({ query, category, color, maxPrice, sort, onChang
           <SelectItem value="White">White</SelectItem>
           <SelectItem value="Black">Black</SelectItem>
           <SelectItem value="Pink">Pink</SelectItem>
+          <SelectItem value="Orange">Orange</SelectItem>
         </SelectContent>
       </Select>
       <div className="space-y-2">
@@ -48,7 +51,7 @@ export function ProductsFilter({ query, category, color, maxPrice, sort, onChang
         <input
           type="range"
           min={500}
-          max={5000}
+          max={10000}
           step={100}
           value={maxPrice}
           className="w-full"

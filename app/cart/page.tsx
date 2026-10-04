@@ -40,7 +40,7 @@ export default function CartPage() {
             <div className="flex-1">
               <h3 className="font-medium">{item.name}</h3>
               <p className="text-sm text-muted-foreground">Size: {item.size}</p>
-              <p className="mt-1 font-semibold">${item.price}</p>
+              <p className="mt-1 font-semibold">Rs.{item.price.toLocaleString()}</p>
               <div className="mt-3 flex items-center gap-2">
                 <Button size="icon" variant="outline" onClick={() => updateQuantity(item.productId, item.size, item.quantity - 1)}>
                   <Minus className="size-4" />
@@ -61,7 +61,7 @@ export default function CartPage() {
         <h2 className="text-xl font-semibold">Order Summary</h2>
         <div className="mt-4 flex items-center justify-between">
           <span>Total</span>
-          <span className="text-2xl font-semibold">${total.toFixed(2)}</span>
+          <span className="text-2xl font-semibold">Rs.{total.toLocaleString()}</span>
         </div>
         <Link href="/checkout">
           <Button className="mt-6 w-full">Proceed to Checkout</Button>

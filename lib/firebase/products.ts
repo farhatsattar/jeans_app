@@ -33,6 +33,8 @@ function transformProduct(id: string, data: Record<string, unknown>): Product {
     sku: data.sku as string,
     isFeatured: data.isFeatured as boolean,
     isActive: data.isActive as boolean,
+    kameezChart: data.kameezChart as Product["kameezChart"],
+    shalwarChart: data.shalwarChart as Product["shalwarChart"],
     createdAt: (data.createdAt as Timestamp)?.toDate?.()?.toISOString() || (data.createdAt as string) || new Date().toISOString(),
     updatedAt: (data.updatedAt as Timestamp)?.toDate?.()?.toISOString() || (data.updatedAt as string) || new Date().toISOString(),
   };
@@ -56,20 +58,32 @@ export async function getProductsByCategory(category: ProductCategory): Promise<
   return snapshot.docs.map((doc) => transformProduct(doc.id, doc.data()));
 }
 
+function stripUndefined<T extends Record<string, unknown>>(data: T): T {
+  return Object.fromEntries(
+    Object.entries(data).filter(([, value]) => value !== undefined)
+  ) as T;
+}
+
 export async function createProduct(data: Omit<Product, "id" | "createdAt" | "updatedAt">): Promise<string> {
-  const docRef = await addDoc(collection(db, COLLECTION), {
-    ...data,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  });
+  const docRef = await addDoc(
+    collection(db, COLLECTION),
+    stripUndefined({
+      ...data,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    })
+  );
   return docRef.id;
 }
 
 export async function updateProduct(id: string, data: Partial<Product>): Promise<void> {
-  await updateDoc(doc(db, COLLECTION, id), {
-    ...data,
-    updatedAt: serverTimestamp(),
-  });
+  await updateDoc(
+    doc(db, COLLECTION, id),
+    stripUndefined({
+      ...data,
+      updatedAt: serverTimestamp(),
+    })
+  );
 }
 
 export async function deleteProduct(id: string): Promise<void> {

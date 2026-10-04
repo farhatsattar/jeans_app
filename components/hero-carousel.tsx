@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -8,7 +7,8 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export interface HeroSlide {
-  image: string;
+  image?: string;
+  video?: string;
   eyebrow: string;
   title: string;
   description: string;
@@ -34,55 +34,61 @@ export function HeroCarousel({ slides, intervalMs = 5000 }: HeroCarouselProps) {
     setActive((index + slides.length) % slides.length);
   };
 
+  const current = slides[active];
+
   return (
-    <section className="relative h-[70vh] min-h-115 overflow-hidden">
+    <section className="relative h-[70vh] min-h-[480px] max-h-[720px] overflow-hidden">
       {slides.map((slide, index) => (
         <div
-          key={slide.image}
+          key={slide.video ?? slide.image}
           className={`absolute inset-0 transition-opacity duration-700 ${
             index === active ? "opacity-100" : "opacity-0"
           }`}
           aria-hidden={index !== active}
         >
-          <Image
-            src={slide.image}
-            alt={slide.title}
-            width={1600}
-            height={1100}
-            priority={index === 0}
-            className="h-full w-full object-cover"
-          />
+          {slide.video ? (
+            <video
+              src={slide.video}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          ) : (
+            <Image
+              src={slide.image ?? ""}
+              alt={slide.title}
+              fill
+              className="object-cover"
+              priority={index === 0}
+              sizes="100vw"
+            />
+          )}
+          <div className="absolute inset-0 bg-black/40" />
         </div>
       ))}
 
-      <div className="absolute inset-0 bg-black/50" />
-
-      <div className="absolute inset-0 px-4 sm:px-6 lg:px-8">
-        <div className="flex h-full flex-col items-center justify-center text-center text-white">
-          {slides.map((slide, index) => (
-            <div
-              key={slide.image}
-              className={`transition-all duration-700 ${
-                index === active ? "opacity-100" : "opacity-0 pointer-events-none"
-              }`}
-              aria-hidden={index !== active}
+      {/* Single stable text layer — no stacking / jumping */}
+      <div className="absolute inset-0 z-10 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl text-center text-white">
+          <p className="text-sm font-medium uppercase tracking-[0.2em] text-white/90">
+            {current.eyebrow}
+          </p>
+          <h1 className="mt-4 text-3xl font-bold leading-tight md:text-5xl lg:text-6xl">
+            {current.title}
+          </h1>
+          <p className="mt-4 text-base text-white/90 md:text-lg">
+            {current.description}
+          </p>
+          <Link href="/products" className="mt-8 inline-block">
+            <Button
+              size="lg"
+              className="rounded-full bg-white px-8 py-6 text-base font-medium text-black shadow-lg hover:bg-white/90"
             >
-              <p className="text-sm font-medium uppercase tracking-[0.2em] text-white">
-                {slide.eyebrow}
-              </p>
-              <h1 className="mt-4 text-4xl font-bold leading-tight drop-shadow-lg md:text-5xl lg:text-6xl">
-                {slide.title}
-              </h1>
-              <p className="mt-4 text-base text-white/90 drop-shadow md:text-lg">
-                {slide.description}
-              </p>
-              <Link href="/products" className="inline-block">
-                <Button size="lg" className="mt-8 shadow-lg">
-                  Shop Collection <ArrowRight className="ml-2 size-4" />
-                </Button>
-              </Link>
-            </div>
-          ))}
+              Shop Collection <ArrowRight className="ml-2 size-5" />
+            </Button>
+          </Link>
         </div>
       </div>
 
@@ -92,7 +98,7 @@ export function HeroCarousel({ slides, intervalMs = 5000 }: HeroCarouselProps) {
             type="button"
             aria-label="Previous slide"
             onClick={() => goTo(active - 1)}
-            className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white transition hover:bg-black/60"
+            className="absolute left-4 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/40 p-3 text-white transition hover:bg-black/60"
           >
             <ArrowLeft className="size-5" />
           </button>
@@ -100,15 +106,15 @@ export function HeroCarousel({ slides, intervalMs = 5000 }: HeroCarouselProps) {
             type="button"
             aria-label="Next slide"
             onClick={() => goTo(active + 1)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white transition hover:bg-black/60"
+            className="absolute right-4 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/40 p-3 text-white transition hover:bg-black/60"
           >
             <ArrowRight className="size-5" />
           </button>
 
-          <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2">
+          <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 gap-2">
             {slides.map((slide, index) => (
               <button
-                key={slide.image}
+                key={slide.video ?? slide.image}
                 type="button"
                 aria-label={`Go to slide ${index + 1}`}
                 onClick={() => goTo(index)}

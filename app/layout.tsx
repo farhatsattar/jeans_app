@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Clothhub - Pakistani Stitched Clothes",
-  description: "Your trusted online store for premium Pakistani stitched Shalwar Kameez, Kurta, Dupatta and more.",
+  description: "Shop Winter Collection, Cotton Elegant Embroidery Suit, Jeans / Trousers, Fancy Wear, Jewelry and Handbags — premium Pakistani fashion by Haa-Meem.",
 };
 
 export default function RootLayout({

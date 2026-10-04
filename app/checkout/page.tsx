@@ -23,8 +23,8 @@ export default function CheckoutPage() {
   const clearCart = useShopStore((state) => state.clearCart);
 
   const total = getCartTotal(cart);
-  const shipping = total >= 5000 ? 0 : 200;
-  const finalTotal = total + shipping;
+  const shipping = 0;
+  const finalTotal = total;
 
   const [isPaying, setIsPaying] = useState(false);
 
@@ -112,7 +112,8 @@ export default function CheckoutPage() {
             | "S"
             | "M"
             | "L"
-            | "XL",
+            | "XL"
+            | "One Size",
 
           color: "Blue",
         })),
@@ -324,11 +325,7 @@ export default function CheckoutPage() {
                 Shipping
               </span>
 
-              <span>
-                {shipping === 0
-                  ? "Free"
-                  : `Rs.${shipping.toLocaleString()}`}
-              </span>
+              <span>Free</span>
             </div>
 
             <div className="flex justify-between border-t pt-3 text-lg font-semibold">

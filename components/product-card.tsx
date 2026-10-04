@@ -3,10 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ShoppingCart, Star } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { Product } from "@/lib/products";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useShopStore } from "@/store/use-shop-store";
 import { toast } from "sonner";
 
@@ -14,31 +13,33 @@ export function ProductCard({ product }: { product: Product }) {
   const addToCart = useShopStore((state) => state.addToCart);
 
   return (
-    <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.2 }}>
-      <div className="overflow-hidden rounded-xl border bg-card">
-        <Link href={`/products/${product.id}`}>
-          <Image
-            src={product.images[0] || "/images/image.jpg"}
-            alt={product.name}
-            width={800}
-            height={900}
-            className="h-72 w-full object-contain"
-          />
+    <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.2 }} className="h-full">
+      <div className="group flex h-full flex-col rounded-xl border bg-white shadow-sm transition-all duration-300 hover:shadow-lg dark:bg-card">
+        <Link href={`/products/${product.id}`} className="block">
+          <div className="relative aspect-[3/4] w-full overflow-hidden rounded-t-xl bg-muted/30">
+            <Image
+              src={product.images[0] || "/images/image.jpg"}
+              alt={product.name}
+              fill
+              className="object-contain object-center transition-transform duration-300 group-hover:scale-[1.02]"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            />
+          </div>
         </Link>
-        <div className="space-y-3 p-4">
-          <div className="flex items-center justify-between">
-            <h3 className="font-medium">{product.name}</h3>
-            <p className="font-semibold">Rs.{product.price.toLocaleString()}</p>
-          </div>
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <span>{product.category}</span>
-            <span className="flex items-center gap-1">
-              <Star className="size-4 fill-yellow-400 text-yellow-400" />
-              {product.rating}
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            {product.isNew ? <Badge>New</Badge> : <span />}
+
+        <div className="flex flex-1 flex-col gap-3 p-4">
+          <Link href={`/products/${product.id}`} className="block">
+            <h3 className="min-h-[3rem] text-base font-medium leading-snug text-foreground transition-colors group-hover:text-primary">
+              {product.name}
+            </h3>
+          </Link>
+
+          <p className="text-xs text-muted-foreground">{product.category}</p>
+
+          <div className="mt-auto flex items-center justify-between gap-3 pt-1">
+            <p className="shrink-0 font-semibold text-foreground">
+              Rs.{product.price.toLocaleString()}
+            </p>
             <Button
               size="sm"
               onClick={() => {
@@ -51,8 +52,9 @@ export function ProductCard({ product }: { product: Product }) {
                 });
                 toast.success("Added to cart");
               }}
+              className="rounded-full bg-black text-white hover:bg-black/90"
             >
-              <ShoppingCart className="mr-2 size-4" />
+              <ShoppingCart className="mr-1.5 size-4" />
               Add
             </Button>
           </div>

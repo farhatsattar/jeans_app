@@ -1,7 +1,43 @@
 // Product Types
-export type ProductCategory = "Shalwar Kameez" | "Kurta" | "Dupatta" | "Trouser";
-export type ProductColor = "Red" | "Green" | "Blue" | "White" | "Black" | "Pink";
-export type ProductSize = "S" | "M" | "L" | "XL";
+export type ProductCategory =
+  | "Winter Collection"
+  | "Cotton Elegant Embroidery Suit"
+  | "Jeans / Trousers"
+  | "Fancy Wear"
+  | "Jewelry"
+  | "Handbags / Purse";
+export type ProductColor =
+  | "Red"
+  | "Green"
+  | "Blue"
+  | "White"
+  | "Black"
+  | "Pink"
+  | "Orange"
+  | "Ivory"
+  | "Maroon"
+  | "Gold"
+  | "Champagne"
+  | "Beige"
+  | "Navy"
+  | "Gray"
+  | "Burgundy"
+  | "Violet";
+export type ProductSize = "S" | "M" | "L" | "XL" | "One Size";
+
+export interface KameezSizeSpec {
+  size: ProductSize;
+  chest: number;
+  length: number;
+  hip: number;
+  flair: number;
+}
+
+export interface ShalwarSizeSpec {
+  length: string;
+  stretchBelt: string;
+  pancha: string;
+}
 
 export interface Product {
   id: string;
@@ -18,6 +54,8 @@ export interface Product {
   sku: string;
   isFeatured: boolean;
   isActive: boolean;
+  kameezChart?: KameezSizeSpec[];
+  shalwarChart?: ShalwarSizeSpec;
   createdAt: string;
   updatedAt: string;
 }

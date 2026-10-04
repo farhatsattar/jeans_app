@@ -69,7 +69,7 @@ export function CategoryForm({
           <Input
             id="name"
             {...register("name")}
-            placeholder="Shalwar Kameez"
+            placeholder="Winter Collection"
           />
           {errors.name && (
             <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>

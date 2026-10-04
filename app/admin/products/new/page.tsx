@@ -23,7 +23,9 @@ export default function NewProductPage() {
       router.push("/admin/products");
     } catch (error) {
       console.error(error);
-      toast.error("Failed to create product");
+      const message =
+        error instanceof Error ? error.message : "Failed to create product";
+      toast.error(message);
     } finally {
       setSubmitting(false);
     }

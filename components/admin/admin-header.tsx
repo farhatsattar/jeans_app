@@ -13,7 +13,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { AdminSidebar } from "./admin-sidebar";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { logoutAdmin } from "@/lib/firebase/auth";
 import { toast } from "sonner";
@@ -55,8 +54,8 @@ export function AdminHeader() {
           </SheetTrigger>
           <SheetContent side="left" className="w-64 p-0">
             <div className="flex h-16 items-center border-b px-6">
-              <span className="text-xl font-semibold">
-                Cloth<span className="text-blue-600">Hub</span>
+              <span className="text-xl font-semibold text-black">
+                Haa-Meem
               </span>
             </div>
             <nav className="flex flex-col gap-1 p-4">

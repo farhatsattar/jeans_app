@@ -43,10 +43,10 @@ export function AdminSidebar() {
     <aside className="hidden h-screen w-64 flex-col border-r bg-card lg:flex">
       <div className="flex h-16 items-center border-b px-6">
         <Link href="/admin" className="flex items-center gap-2">
-          <span className="text-xl font-semibold">
-            Cloth<span className="text-blue-600">Hub</span>
+          <span className="text-xl font-semibold text-black">
+            Haa-Meem
           </span>
-          <span className="rounded-md bg-blue-100 px-1.5 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+          <span className="rounded-md bg-black px-1.5 py-0.5 text-xs font-medium text-white dark:bg-black dark:text-white">
             Admin
           </span>
         </Link>

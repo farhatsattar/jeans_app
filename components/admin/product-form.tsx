@@ -25,13 +25,41 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 const productSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
-  category: z.enum(["Shalwar Kameez", "Kurta", "Dupatta", "Trouser"]),
+  category: z.enum([
+    "Winter Collection",
+    "Cotton Elegant Embroidery Suit",
+    "Jeans / Trousers",
+    "Fancy Wear",
+    "Jewelry",
+    "Handbags / Purse",
+  ]),
   price: z.number().min(0, "Price must be positive"),
   discountPrice: z.number().min(0).optional(),
   stock: z.number().int().min(0, "Stock must be positive"),
   sku: z.string().min(1, "SKU is required"),
-  sizes: z.array(z.enum(["S", "M", "L", "XL"])).min(1, "Select at least one size"),
-  colors: z.array(z.enum(["Red", "Green", "Blue", "White", "Black", "Pink"])).min(1, "Select at least one color"),
+  sizes: z.array(z.enum(["S", "M", "L", "XL", "One Size"])).min(1, "Select at least one size"),
+  colors: z
+    .array(
+      z.enum([
+        "Red",
+        "Green",
+        "Blue",
+        "White",
+        "Black",
+        "Pink",
+        "Orange",
+        "Ivory",
+        "Maroon",
+        "Gold",
+        "Champagne",
+        "Beige",
+        "Navy",
+        "Gray",
+        "Burgundy",
+        "Violet",
+      ])
+    )
+    .min(1, "Select at least one color"),
   tags: z.string(),
   isFeatured: z.boolean(),
   isActive: z.boolean(),
@@ -46,8 +74,25 @@ interface ProductFormProps {
   submitting?: boolean;
 }
 
-const ALL_SIZES: ProductSize[] = ["S", "M", "L", "XL"];
-const ALL_COLORS: ProductColor[] = ["Red", "Green", "Blue", "White", "Black", "Pink"];
+const ALL_SIZES: ProductSize[] = ["S", "M", "L", "XL", "One Size"];
+const ALL_COLORS: ProductColor[] = [
+  "Red",
+  "Green",
+  "Blue",
+  "White",
+  "Black",
+  "Pink",
+  "Orange",
+  "Ivory",
+  "Maroon",
+  "Gold",
+  "Champagne",
+  "Beige",
+  "Navy",
+  "Gray",
+  "Burgundy",
+  "Violet",
+];
 
 export function ProductForm({
   initialData,
@@ -68,7 +113,7 @@ export function ProductForm({
     defaultValues: {
       name: initialData?.name || "",
       description: initialData?.description || "",
-      category: (initialData?.category as ProductCategory) || "Shalwar Kameez",
+      category: (initialData?.category as ProductCategory) || "Winter Collection",
       price: initialData?.price || 0,
       discountPrice: initialData?.discountPrice,
       stock: initialData?.stock || 0,
@@ -107,18 +152,42 @@ export function ProductForm({
       alert("Please add at least one product image");
       return;
     }
-    await onSubmit({
-      ...data,
+
+    const payload: Omit<Product, "id" | "createdAt" | "updatedAt"> = {
+      name: data.name,
+      description: data.description,
+      category: data.category,
+      price: data.price,
+      stock: data.stock,
+      sku: data.sku,
+      sizes: data.sizes,
+      colors: data.colors,
       images,
       tags: data.tags
         .split(",")
         .map((tag) => tag.trim())
         .filter(Boolean),
-    });
+      isFeatured: Boolean(data.isFeatured),
+      isActive: data.isActive !== false,
+    };
+
+    if (
+      typeof data.discountPrice === "number" &&
+      !Number.isNaN(data.discountPrice)
+    ) {
+      payload.discountPrice = data.discountPrice;
+    }
+
+    await onSubmit(payload);
   };
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+    <form
+      onSubmit={handleSubmit(handleFormSubmit, () => {
+        alert("Please fill all required fields correctly.");
+      })}
+      className="space-y-6"
+    >
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           <Card>
@@ -131,7 +200,7 @@ export function ProductForm({
                 <Input
                   id="name"
                   {...register("name")}
-                  placeholder="Premium Cotton Kurta"
+                  placeholder="Binsaeed Zari Khaddar 3pc"
                 />
                 {errors.name && (
                   <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
@@ -166,10 +235,12 @@ export function ProductForm({
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Shalwar Kameez">Shalwar Kameez</SelectItem>
-                      <SelectItem value="Kurta">Kurta</SelectItem>
-                      <SelectItem value="Dupatta">Dupatta</SelectItem>
-                      <SelectItem value="Trouser">Trouser</SelectItem>
+                      <SelectItem value="Winter Collection">Winter Collection</SelectItem>
+                      <SelectItem value="Cotton Elegant Embroidery Suit">Cotton Elegant Embroidery Suit</SelectItem>
+                      <SelectItem value="Jeans / Trousers">Jeans / Trousers</SelectItem>
+                      <SelectItem value="Fancy Wear">Fancy Wear</SelectItem>
+                      <SelectItem value="Jewelry">Jewelry</SelectItem>
+                      <SelectItem value="Handbags / Purse">Handbags / Purse</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -215,7 +286,15 @@ export function ProductForm({
                   <Input
                     id="discountPrice"
                     type="number"
-                    {...register("discountPrice", { valueAsNumber: true })}
+                    {...register("discountPrice", {
+                      setValueAs: (value) => {
+                        if (value === "" || value === null || value === undefined) {
+                          return undefined;
+                        }
+                        const parsed = Number(value);
+                        return Number.isNaN(parsed) ? undefined : parsed;
+                      },
+                    })}
                     placeholder="Optional"
                   />
                 </div>
@@ -333,9 +412,9 @@ export function ProductForm({
                   </p>
                 </div>
                 <Switch
-                  checked={isActive}
+                  checked={Boolean(isActive)}
                   onCheckedChange={(checked) =>
-                    setValue("isActive", checked, { shouldValidate: true })
+                    setValue("isActive", Boolean(checked), { shouldValidate: true })
                   }
                 />
               </div>
@@ -348,9 +427,11 @@ export function ProductForm({
                   </p>
                 </div>
                 <Switch
-                  checked={isFeatured}
+                  checked={Boolean(isFeatured)}
                   onCheckedChange={(checked) =>
-                    setValue("isFeatured", checked, { shouldValidate: true })
+                    setValue("isFeatured", Boolean(checked), {
+                      shouldValidate: true,
+                    })
                   }
                 />
               </div>

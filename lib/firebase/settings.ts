@@ -18,8 +18,8 @@ const DEFAULT_SETTINGS: StoreSettings = {
   },
   currency: "PKR",
   currencySymbol: "Rs.",
-  shippingCharges: 200,
-  freeShippingThreshold: 5000,
+  shippingCharges: 0,
+  freeShippingThreshold: 0,
 };
 
 export async function getSettings(): Promise<StoreSettings> {

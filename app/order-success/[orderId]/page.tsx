@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { CheckCircle2, Package, Truck } from "lucide-react";
+import { onAuthStateChanged } from "firebase/auth";
 
 import { Button } from "@/components/ui/button";
 import { getOrder } from "@/lib/firebase/orders";
@@ -22,15 +23,15 @@ export default function OrderSuccessPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function loadOrder() {
+    if (!orderId) return;
+
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (!currentUser) {
+        router.push("/login");
+        return;
+      }
+
       try {
-        const currentUser = auth.currentUser;
-
-        if (!currentUser) {
-          router.push("/login");
-          return;
-        }
-
         const data = await getOrder(orderId);
 
         if (!data) {
@@ -38,34 +39,21 @@ export default function OrderSuccessPage() {
           return;
         }
 
-        // Security check on client side as an additional protection
-        if (
-          data.customerId !== currentUser.uid
-        ) {
-          setError(
-            "You are not allowed to view this order."
-          );
+        if (data.customerId !== currentUser.uid) {
+          setError("You are not allowed to view this order.");
           return;
         }
 
         setOrder(data);
       } catch (err) {
-        console.error(
-          "Failed to load order:",
-          err
-        );
-
-        setError(
-          "Unable to load order details."
-        );
+        console.error("Failed to load order:", err);
+        setError("Unable to load order details.");
       } finally {
         setLoading(false);
       }
-    }
+    });
 
-    if (orderId) {
-      loadOrder();
-    }
+    return () => unsubscribe();
   }, [orderId, router]);
 
   if (loading) {
@@ -378,8 +366,8 @@ export default function OrderSuccessPage() {
           className="flex-1"
           asChild
         >
-          <Link href="/orders">
-            View My Orders
+          <Link href={`/orders/${order.id}`}>
+            View Order
           </Link>
         </Button>
       </div>

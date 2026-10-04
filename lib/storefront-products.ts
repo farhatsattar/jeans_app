@@ -22,7 +22,7 @@ function toStoreProduct(product: AdminProduct): StoreProduct {
     colors: product.colors,
     rating: 4.5,
     reviews: 0,
-    isFeatured: product.isFeatured,
+    isFeatured: Boolean(product.isFeatured),
     isNew,
   };
 }
@@ -30,7 +30,8 @@ function toStoreProduct(product: AdminProduct): StoreProduct {
 export async function fetchStoreProducts(): Promise<StoreProduct[]> {
   try {
     const products = await getAllProducts();
-    const activeProducts = products.filter((product) => product.isActive);
+    // Treat missing isActive as active so newly added products still show
+    const activeProducts = products.filter((product) => product.isActive !== false);
 
     if (activeProducts.length === 0) {
       return fallbackProducts;

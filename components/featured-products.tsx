@@ -14,18 +14,8 @@ export function FeaturedProducts() {
     async function loadProducts() {
       try {
         const data = await fetchStoreProducts();
-
-        console.log("STORE PRODUCTS:", data);
-        console.log(
-          "FEATURED PRODUCTS:",
-          data.filter((product) => product.isFeatured === true)
-        );
-
-        setProducts(
-          data
-            .filter((product) => product.isFeatured === true)
-            .slice(0, 6)
-        );
+        const featured = data.filter((product) => Boolean(product.isFeatured));
+        setProducts(featured);
       } catch (error) {
         console.error("Failed to load featured products:", error);
         setProducts([]);
@@ -41,7 +31,7 @@ export function FeaturedProducts() {
     return (
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 3 }).map((_, index) => (
-          <Skeleton key={index} className="h-96 w-full" />
+          <Skeleton key={index} className="h-[420px] w-full" />
         ))}
       </div>
     );

@@ -40,8 +40,8 @@ export default function SettingsPage() {
       },
       currency: "PKR",
       currencySymbol: "Rs.",
-      shippingCharges: 200,
-      freeShippingThreshold: 5000,
+      shippingCharges: 0,
+      freeShippingThreshold: 0,
     },
   });
 

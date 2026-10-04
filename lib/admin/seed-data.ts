@@ -2,125 +2,237 @@
  * Seed data for the admin dashboard.
  *
  * Run this once to populate Firebase with sample data.
- * You can run it from a browser console on the admin dashboard
- * or from any client-side code with Firebase initialized.
  */
 
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { Product, Category, Order, Customer, StoreSettings } from "@/types/admin";
+import { DEFAULT_KAMEEZ_CHART, DEFAULT_SHALWAR_CHART } from "@/lib/size-chart";
 
 export const sampleCategories: Omit<Category, "id" | "createdAt">[] = [
   {
-    name: "Shalwar Kameez",
-    slug: "shalwar-kameez",
+    name: "Winter Collection",
+    slug: "winter-collection",
     image: "/images/images.jfif",
-    description: "Traditional Pakistani stitched Shalwar Kameez collection",
+    description: "Warm winter suits and seasonal stitched wear for cold weather",
   },
   {
-    name: "Kurta",
-    slug: "kurta",
-    image: "/images/image.jpg",
-    description: "Premium stitched Kurta for men and women",
+    name: "Cotton Elegant Embroidery Suit",
+    slug: "cotton-elegant-embroidery-suit",
+    image: "/images/kurta.jfif",
+    description: "Premium cotton elegant embroidery suits for daily and formal styling",
   },
   {
-    name: "Dupatta",
-    slug: "dupatta",
-    image: "/images/images%20(5).jfif",
-    description: "Beautiful embroidered and printed dupattas",
+    name: "Jeans / Trousers",
+    slug: "jeans-trousers",
+    image: "/images/tr2.jfif",
+    description: "Comfortable jeans and tailored trousers collection",
   },
   {
-    name: "Trouser",
-    slug: "trouser",
-    image: "/images/images%20(6).jfif",
-    description: "Premium stitched trousers and pants",
+    name: "Fancy Wear",
+    slug: "fancy-wear",
+    image: "/images/images%20(2).jfif",
+    description: "Luxury fancy outfits for weddings and special occasions",
+  },
+  {
+    name: "Jewelry",
+    slug: "jewelry",
+    image: "/images/jewelry-pearl-set.jpg",
+    description: "Elegant jewelry sets for parties, bridal and festive looks",
+  },
+  {
+    name: "Handbags / Purse",
+    slug: "handbags-purse",
+    image: "/images/handbag-black.jpg",
+    description: "Stylish handbags and clutches for everyday and occasions",
   },
 ];
 
 export const sampleProducts: Omit<Product, "id" | "createdAt" | "updatedAt">[] = [
   {
-    name: "Cotton Shalwar Kameez",
-    description: "Comfortable cotton stitched Shalwar Kameez, perfect for everyday wear.",
-    category: "Shalwar Kameez",
-    price: 1499,
-    discountPrice: 1299,
+    name: "Binsaeed Zari Khaddar Stitched 3pc",
+    description:
+      "Expertly tailored Binsaeed khaddar stitched shalwar kameez 3pc set. Made from premium khaddar. Includes chadder 2.5 meter.",
+    category: "Winter Collection",
+    price: 3950,
+    stock: 40,
+    sku: "KHD-BIN-001",
+    sizes: ["S", "M", "L", "XL"],
+    colors: ["Violet", "Maroon"],
+    tags: ["khaddar", "binsaeed", "winter"],
+    images: ["/images/images.jfif", "/images/images%20(1).jfif"],
+    isFeatured: true,
+    isActive: true,
+    kameezChart: DEFAULT_KAMEEZ_CHART,
+    shalwarChart: DEFAULT_SHALWAR_CHART,
+  },
+  {
+    name: "Classic Solid Khaddar Suit",
+    description: "Warm solid khaddar stitched 3pc suit for winter everyday wear.",
+    category: "Winter Collection",
+    price: 3499,
+    discountPrice: 3199,
     stock: 50,
-    sku: "SK-COT-001",
+    sku: "KHD-SOL-001",
     sizes: ["S", "M", "L", "XL"],
-    colors: ["White", "Blue"],
-    tags: ["cotton", "summer", "casual"],
-    images: ["/images/image.jpg", "/images/images%20(1).jfif"],
+    colors: ["Beige", "Navy"],
+    tags: ["khaddar", "solid", "winter"],
+    images: ["/images/image.jpg", "/images/images%20(2).jfif"],
     isFeatured: true,
     isActive: true,
+    kameezChart: DEFAULT_KAMEEZ_CHART,
+    shalwarChart: DEFAULT_SHALWAR_CHART,
   },
   {
-    name: "Premium Lawn Shalwar Kameez",
-    description: "Elegant lawn fabric stitched Shalwar Kameez with beautiful embroidery.",
-    category: "Shalwar Kameez",
+    name: "White Cotton Elegant Embroidery Suit",
+    description: "Elegant white cotton embroidery suit with delicate thread work.",
+    category: "Cotton Elegant Embroidery Suit",
+    price: 3999,
+    stock: 35,
+    sku: "CES-WHT-001",
+    sizes: ["S", "M", "L", "XL"],
+    colors: ["White", "Ivory"],
+    tags: ["cotton", "embroidery", "formal"],
+    images: ["/images/kurta.jfif"],
+    isFeatured: true,
+    isActive: true,
+    kameezChart: DEFAULT_KAMEEZ_CHART,
+    shalwarChart: DEFAULT_SHALWAR_CHART,
+  },
+  {
+    name: "Daily Wear Cotton Embroidery Suit",
+    description: "Soft cotton elegant embroidery suit for comfortable everyday styling.",
+    category: "Cotton Elegant Embroidery Suit",
     price: 2499,
-    stock: 30,
-    sku: "SK-LWN-001",
-    sizes: ["S", "M", "L", "XL"],
-    colors: ["Red", "Green"],
-    tags: ["lawn", "embroidered", "premium"],
-    images: ["/images/images.jfif", "/images/images%20(2).jfif"],
-    isFeatured: true,
-    isActive: true,
-  },
-  {
-    name: "Daily Wear Cotton Kurta",
-    description: "Soft cotton stitched Kurta, ideal for daily wear with vibrant prints.",
-    category: "Kurta",
-    price: 1199,
     stock: 75,
-    sku: "KUR-COT-001",
+    sku: "CES-COT-001",
     sizes: ["S", "M", "L", "XL"],
-    colors: ["Green", "Blue"],
-    tags: ["cotton", "daily", "casual"],
-    images: ["/images/image.jpg"],
+    colors: ["Blue", "Green"],
+    tags: ["cotton", "embroidery", "daily"],
+    images: ["/images/kurta1.jfif"],
     isFeatured: true,
     isActive: true,
+    kameezChart: DEFAULT_KAMEEZ_CHART,
+    shalwarChart: DEFAULT_SHALWAR_CHART,
   },
   {
-    name: "Chiffon Dupatta",
-    description: "Beautiful pure chiffon dupatta with delicate embellishments.",
-    category: "Dupatta",
-    price: 899,
-    stock: 100,
-    sku: "DUP-CHF-001",
+    name: "Classic Blue Jeans",
+    description: "Comfortable classic blue jeans with a clean straight fit.",
+    category: "Jeans / Trousers",
+    price: 2499,
+    stock: 40,
+    sku: "JNS-BLU-001",
     sizes: ["S", "M", "L", "XL"],
-    colors: ["Pink", "Blue"],
-    tags: ["chiffon", "embroidered"],
-    images: ["/images/images%20(1).jfif"],
+    colors: ["Blue", "Black"],
+    tags: ["jeans", "denim", "casual"],
+    images: ["/images/tr2.jfif", "/images/tr3.jfif"],
     isFeatured: true,
     isActive: true,
+    kameezChart: DEFAULT_KAMEEZ_CHART,
+    shalwarChart: DEFAULT_SHALWAR_CHART,
   },
   {
-    name: "Silk Trouser",
-    description: "Premium silk-blend stitched trouser with elegant drape and comfort.",
-    category: "Trouser",
-    price: 1299,
-    stock: 60,
-    sku: "TRS-SLK-001",
+    name: "Slim Fit Trousers",
+    description: "Tailored slim-fit trousers with soft stretch for everyday wear.",
+    category: "Jeans / Trousers",
+    price: 2299,
+    stock: 35,
+    sku: "TRS-SLM-001",
     sizes: ["S", "M", "L", "XL"],
-    colors: ["Black", "Red"],
-    tags: ["silk", "formal"],
+    colors: ["Black", "Navy"],
+    tags: ["trousers", "slim-fit", "casual"],
+    images: ["/images/tr3.jfif", "/images/tr4.jfif"],
+    isFeatured: true,
+    isActive: true,
+    kameezChart: DEFAULT_KAMEEZ_CHART,
+    shalwarChart: DEFAULT_SHALWAR_CHART,
+  },
+  {
+    name: "Red Fancy Lehenga",
+    description: "Stunning red lehenga with heavy zari work for weddings.",
+    category: "Fancy Wear",
+    price: 8999,
+    stock: 15,
+    sku: "FNY-LHG-001",
+    sizes: ["S", "M", "L", "XL"],
+    colors: ["Red", "Maroon", "Gold"],
+    tags: ["fancy", "wedding", "lehenga"],
     images: ["/images/images%20(2).jfif"],
     isFeatured: true,
     isActive: true,
+    kameezChart: DEFAULT_KAMEEZ_CHART,
+    shalwarChart: DEFAULT_SHALWAR_CHART,
   },
   {
-    name: "Printed Geometric Kurta",
-    description: "Modern geometric print Kurta with pocket detail, perfect for casual outings.",
-    category: "Kurta",
-    price: 1399,
+    name: "Heavy Embroidery Fancy Suit",
+    description: "Fine embroidery fancy wear suit for weddings and events.",
+    category: "Fancy Wear",
+    price: 7499,
+    stock: 18,
+    sku: "FNY-EMB-001",
+    sizes: ["S", "M", "L", "XL"],
+    colors: ["White", "Pink"],
+    tags: ["fancy", "embroidery", "wedding"],
+    images: ["/images/kurta.jfif"],
+    isFeatured: true,
+    isActive: true,
+    kameezChart: DEFAULT_KAMEEZ_CHART,
+    shalwarChart: DEFAULT_SHALWAR_CHART,
+  },
+  {
+    name: "Gold Pearl Necklace Set",
+    description: "Elegant gold-tone pearl necklace set with matching earrings.",
+    category: "Jewelry",
+    price: 2499,
+    stock: 45,
+    sku: "JWL-PRL-001",
+    sizes: ["One Size"],
+    colors: ["Gold", "Champagne"],
+    tags: ["jewelry", "pearl", "party"],
+    images: ["/images/jewelry-pearl-set.jpg", "/images/jewelry-kundan-set.jpg"],
+    isFeatured: true,
+    isActive: true,
+  },
+  {
+    name: "Kundan Bridal Jewelry Set",
+    description: "Traditional kundan jewelry set for weddings and festive wear.",
+    category: "Jewelry",
+    price: 4599,
+    stock: 20,
+    sku: "JWL-KDN-001",
+    sizes: ["One Size"],
+    colors: ["Gold", "Red"],
+    tags: ["jewelry", "kundan", "bridal"],
+    images: ["/images/jewelry-kundan-set.jpg", "/images/jewelry-pearl-set.jpg"],
+    isFeatured: true,
+    isActive: true,
+  },
+  {
+    name: "Classic Black Handbag",
+    description: "Structured black handbag with gold hardware for everyday and formal use.",
+    category: "Handbags / Purse",
+    price: 2999,
+    stock: 30,
+    sku: "BAG-BLK-001",
+    sizes: ["One Size"],
+    colors: ["Black", "Beige"],
+    tags: ["handbag", "purse", "everyday"],
+    images: ["/images/handbag-black.jpg", "/images/purse-clutch.jpg"],
+    isFeatured: true,
+    isActive: true,
+  },
+  {
+    name: "Embroidered Clutch Purse",
+    description: "Compact embroidered clutch for parties and evening events.",
+    category: "Handbags / Purse",
+    price: 1899,
     stock: 40,
-    sku: "KUR-GEO-001",
-    sizes: ["S", "M", "L"],
-    colors: ["Blue", "White"],
-    tags: ["geometric", "printed", "casual"],
-    images: ["/images/images.jfif"],
-    isFeatured: false,
+    sku: "BAG-CLT-001",
+    sizes: ["One Size"],
+    colors: ["Maroon", "Gold"],
+    tags: ["clutch", "purse", "party"],
+    images: ["/images/purse-clutch.jpg", "/images/handbag-black.jpg"],
+    isFeatured: true,
     isActive: true,
   },
 ];
@@ -164,17 +276,17 @@ export const sampleOrders: Omit<Order, "id" | "createdAt" | "updatedAt">[] = [
     items: [
       {
         productId: "prod-1",
-        name: "Cotton Shalwar Kameez",
-        image: "/images/image.jpg",
-        price: 1499,
+        name: "Binsaeed Zari Khaddar Stitched 3pc",
+        image: "/images/images.jfif",
+        price: 3950,
         quantity: 1,
         size: "M",
-        color: "White",
+        color: "Violet",
       },
     ],
-    subtotal: 1499,
+    subtotal: 3950,
     shipping: 200,
-    total: 1699,
+    total: 4150,
     status: "delivered",
     shippingAddress: {
       fullName: "Ayesha Khan",
@@ -190,17 +302,17 @@ export const sampleOrders: Omit<Order, "id" | "createdAt" | "updatedAt">[] = [
     items: [
       {
         productId: "prod-2",
-        name: "Premium Lawn Shalwar Kameez",
-        image: "/images/images.jfif",
-        price: 2499,
-        quantity: 2,
+        name: "White Cotton Elegant Embroidery Suit",
+        image: "/images/image.jpg",
+        price: 3999,
+        quantity: 1,
         size: "L",
-        color: "Red",
+        color: "White",
       },
     ],
-    subtotal: 4998,
+    subtotal: 3999,
     shipping: 0,
-    total: 4998,
+    total: 3999,
     status: "shipped",
     shippingAddress: {
       fullName: "Fatima Ali",
@@ -216,17 +328,17 @@ export const sampleOrders: Omit<Order, "id" | "createdAt" | "updatedAt">[] = [
     items: [
       {
         productId: "prod-3",
-        name: "Chiffon Dupatta",
-        image: "/images/images%20(1).jfif",
-        price: 899,
-        quantity: 3,
+        name: "Classic Blue Jeans",
+        image: "/images/images.jfif",
+        price: 5499,
+        quantity: 1,
         size: "M",
-        color: "Pink",
+        color: "Red",
       },
     ],
-    subtotal: 2697,
+    subtotal: 5499,
     shipping: 200,
-    total: 2897,
+    total: 5699,
     status: "processing",
     shippingAddress: {
       fullName: "Zainab Ahmed",
@@ -242,17 +354,17 @@ export const sampleOrders: Omit<Order, "id" | "createdAt" | "updatedAt">[] = [
     items: [
       {
         productId: "prod-4",
-        name: "Silk Trouser",
+        name: "Red Fancy Lehenga",
         image: "/images/images%20(2).jfif",
-        price: 1299,
+        price: 8999,
         quantity: 1,
         size: "M",
-        color: "Black",
+        color: "Red",
       },
     ],
-    subtotal: 1299,
+    subtotal: 8999,
     shipping: 200,
-    total: 1499,
+    total: 9199,
     status: "pending",
     shippingAddress: {
       fullName: "Hira Malik",
@@ -281,10 +393,6 @@ export const defaultSettings: StoreSettings = {
   freeShippingThreshold: 5000,
 };
 
-/**
- * Seeds the database with sample data.
- * Use this in a browser console or a special page.
- */
 export async function seedDatabase(): Promise<void> {
   if (typeof window === "undefined") {
     throw new Error("seedDatabase must be called in the browser");
@@ -292,7 +400,6 @@ export async function seedDatabase(): Promise<void> {
 
   console.log("Seeding database...");
 
-  // Seed categories
   for (const category of sampleCategories) {
     await addDoc(collection(db, "categories"), {
       ...category,
@@ -301,7 +408,6 @@ export async function seedDatabase(): Promise<void> {
   }
   console.log(`✓ Added ${sampleCategories.length} categories`);
 
-  // Seed products
   for (const product of sampleProducts) {
     await addDoc(collection(db, "products"), {
       ...product,
@@ -311,7 +417,6 @@ export async function seedDatabase(): Promise<void> {
   }
   console.log(`✓ Added ${sampleProducts.length} products`);
 
-  // Seed customers
   for (const customer of sampleCustomers) {
     await addDoc(collection(db, "customers"), {
       ...customer,
@@ -320,7 +425,6 @@ export async function seedDatabase(): Promise<void> {
   }
   console.log(`✓ Added ${sampleCustomers.length} customers`);
 
-  // Seed orders
   for (const order of sampleOrders) {
     await addDoc(collection(db, "orders"), {
       ...order,
