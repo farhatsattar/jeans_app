@@ -9,7 +9,7 @@ import { MoreCollectionsButton } from "@/components/more-collections-button";
 const categories = [
   { name: "Winter Collection", image: "/images/images.jfif" },
   { name: "Cotton Elegant Embroidery Suit", image: "/images/kurta.jfif" },
-  { name: "Jeans / Trousers", image: "/images/tr2.jfif" },
+  { name: "Jeans / Trousers", image: "/images/tr1.jfif" },
   { name: "Fancy Wear", image: "/images/images%20(2).jfif" },
   { name: "Jewelry", image: "/images/jewelry-pearl-set.jpg" },
   { name: "Handbags / Purse", image: "/images/handbag-black.jpg" },

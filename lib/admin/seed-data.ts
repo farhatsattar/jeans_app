@@ -25,7 +25,7 @@ export const sampleCategories: Omit<Category, "id" | "createdAt">[] = [
   {
     name: "Jeans / Trousers",
     slug: "jeans-trousers",
-    image: "/images/tr2.jfif",
+    image: "/images/tr1.jfif",
     description: "Comfortable jeans and tailored trousers collection",
   },
   {
@@ -125,7 +125,7 @@ export const sampleProducts: Omit<Product, "id" | "createdAt" | "updatedAt">[] =
     sizes: ["S", "M", "L", "XL"],
     colors: ["Blue", "Black"],
     tags: ["jeans", "denim", "casual"],
-    images: ["/images/tr2.jfif", "/images/tr3.jfif"],
+    images: ["/images/tr1.jfif", "/images/tr3.jfif"],
     isFeatured: true,
     isActive: true,
     kameezChart: DEFAULT_KAMEEZ_CHART,
@@ -141,7 +141,7 @@ export const sampleProducts: Omit<Product, "id" | "createdAt" | "updatedAt">[] =
     sizes: ["S", "M", "L", "XL"],
     colors: ["Black", "Navy"],
     tags: ["trousers", "slim-fit", "casual"],
-    images: ["/images/tr3.jfif", "/images/tr4.jfif"],
+    images: ["/images/tr3.jfif", "/images/tr.jfif"],
     isFeatured: true,
     isActive: true,
     kameezChart: DEFAULT_KAMEEZ_CHART,
