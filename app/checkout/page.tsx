@@ -26,7 +26,7 @@ export default function CheckoutPage() {
   const shipping = 0;
   const finalTotal = total;
 
-  const [isPaying, setIsPaying] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (
     event: FormEvent<HTMLFormElement>
@@ -46,7 +46,7 @@ export default function CheckoutPage() {
       return;
     }
 
-    setIsPaying(true);
+    setIsSubmitting(true);
 
     const formData = new FormData(event.currentTarget);
 
@@ -70,25 +70,25 @@ export default function CheckoutPage() {
 
     if (!fullName) {
       toast.error("Please enter your full name.");
-      setIsPaying(false);
+      setIsSubmitting(false);
       return;
     }
 
     if (!email) {
       toast.error("Please enter your email.");
-      setIsPaying(false);
+      setIsSubmitting(false);
       return;
     }
 
     if (!address) {
       toast.error("Please enter your delivery address.");
-      setIsPaying(false);
+      setIsSubmitting(false);
       return;
     }
 
     if (!phone) {
       toast.error("Please enter your phone number.");
-      setIsPaying(false);
+      setIsSubmitting(false);
       return;
     }
 
@@ -159,7 +159,7 @@ export default function CheckoutPage() {
         "Failed to place order. Please try again."
       );
     } finally {
-      setIsPaying(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -245,13 +245,9 @@ export default function CheckoutPage() {
 
         {/* PAYMENT */}
         <div className="rounded-lg border bg-muted/40 p-4">
-          <p className="font-medium">
-            Payment Method
-          </p>
-
+          <p className="font-medium">Payment Method</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Stripe Payment: Mock integration enabled
-            for demo.
+            Cash on Delivery (COD) — pay when your order arrives.
           </p>
         </div>
 
@@ -259,14 +255,9 @@ export default function CheckoutPage() {
         <Button
           type="submit"
           className="w-full"
-          disabled={
-            isPaying ||
-            cart.length === 0
-          }
+          disabled={isSubmitting || cart.length === 0}
         >
-          {isPaying
-            ? "Processing Payment..."
-            : "Place Order"}
+          {isSubmitting ? "Placing Order..." : "Place Order"}
         </Button>
       </form>
 

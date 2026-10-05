@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -19,8 +19,31 @@ interface HeroCarouselProps {
   intervalMs?: number;
 }
 
-export function HeroCarousel({ slides, intervalMs = 5000 }: HeroCarouselProps) {
+export function HeroCarousel({ slides, intervalMs = 6000 }: HeroCarouselProps) {
   const [active, setActive] = useState(0);
+  // Only mount videos the user has actually seen — avoids downloading all hero videos on first paint
+  const [loadedIndexes, setLoadedIndexes] = useState<Set<number>>(() => new Set([0]));
+  const videoRefs = useRef<Record<number, HTMLVideoElement | null>>({});
+
+  useEffect(() => {
+    setLoadedIndexes((prev) => {
+      if (prev.has(active)) return prev;
+      const next = new Set(prev);
+      next.add(active);
+      return next;
+    });
+  }, [active]);
+
+  useEffect(() => {
+    Object.entries(videoRefs.current).forEach(([index, video]) => {
+      if (!video) return;
+      if (Number(index) === active) {
+        void video.play().catch(() => undefined);
+      } else {
+        video.pause();
+      }
+    });
+  }, [active]);
 
   useEffect(() => {
     if (slides.length <= 1) return;
@@ -38,38 +61,49 @@ export function HeroCarousel({ slides, intervalMs = 5000 }: HeroCarouselProps) {
 
   return (
     <section className="relative h-[70vh] min-h-[480px] max-h-[720px] overflow-hidden">
-      {slides.map((slide, index) => (
-        <div
-          key={slide.video ?? slide.image}
-          className={`absolute inset-0 transition-opacity duration-700 ${
-            index === active ? "opacity-100" : "opacity-0"
-          }`}
-          aria-hidden={index !== active}
-        >
-          {slide.video ? (
-            <video
-              src={slide.video}
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-          ) : (
-            <Image
-              src={slide.image ?? ""}
-              alt={slide.title}
-              fill
-              className="object-cover"
-              priority={index === 0}
-              sizes="100vw"
-            />
-          )}
-          <div className="absolute inset-0 bg-black/40" />
-        </div>
-      ))}
+      {slides.map((slide, index) => {
+        const isActive = index === active;
+        const shouldLoad = loadedIndexes.has(index);
 
-      {/* Single stable text layer — no stacking / jumping */}
+        return (
+          <div
+            key={slide.video ?? slide.image}
+            className={`absolute inset-0 transition-opacity duration-700 ${
+              isActive ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
+            aria-hidden={!isActive}
+          >
+            {slide.video ? (
+              shouldLoad ? (
+                <video
+                  ref={(el) => {
+                    videoRefs.current[index] = el;
+                  }}
+                  src={slide.video}
+                  muted
+                  loop
+                  playsInline
+                  preload={index === 0 ? "metadata" : "none"}
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              ) : (
+                <div className="absolute inset-0 bg-neutral-900" />
+              )
+            ) : (
+              <Image
+                src={slide.image ?? ""}
+                alt={slide.title}
+                fill
+                className="object-cover"
+                priority={index === 0}
+                sizes="100vw"
+              />
+            )}
+            <div className="absolute inset-0 bg-black/40" />
+          </div>
+        );
+      })}
+
       <div className="absolute inset-0 z-10 flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl text-center text-white">
           <p className="text-sm font-medium uppercase tracking-[0.2em] text-white/90">

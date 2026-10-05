@@ -14,7 +14,9 @@ export function FeaturedProducts() {
     async function loadProducts() {
       try {
         const data = await fetchStoreProducts();
-        const featured = data.filter((product) => Boolean(product.isFeatured));
+        const featured = data
+          .filter((product) => Boolean(product.isFeatured))
+          .slice(0, 6);
         setProducts(featured);
       } catch (error) {
         console.error("Failed to load featured products:", error);
