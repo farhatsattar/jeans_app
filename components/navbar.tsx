@@ -165,10 +165,10 @@ export function Navbar() {
 
       {/* Main Navbar */}
       <header className="sticky top-0 z-50 border-b border-border bg-white dark:bg-card">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto grid h-16 max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-2 px-4 sm:px-6 lg:px-8">
 
           {/* Left Side */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-start gap-1 sm:gap-2">
             <Button
               variant="ghost"
               size="icon"
@@ -201,18 +201,18 @@ export function Navbar() {
           {/* Centered Logo */}
           <Link
             href="/"
-            className="absolute left-1/2 -translate-x-1/2 text-2xl font-bold tracking-wider text-foreground lg:static lg:translate-x-0"
+            className="whitespace-nowrap text-center text-lg font-bold tracking-wider text-foreground sm:text-xl md:text-2xl"
           >
             Haa-Meem
           </Link>
 
           {/* Right Side */}
-          <div className="flex items-center gap-3">
-            <Link href="/signup">
+          <div className="flex items-center justify-end gap-1 sm:gap-2">
+            <Link href="/login">
               <Button
                 variant="ghost"
                 size="icon"
-                aria-label="Signup"
+                aria-label="Login"
               >
                 <User className="size-5" />
               </Button>
