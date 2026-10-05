@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { HeroCarousel, type HeroSlide } from "@/components/hero-carousel";
 import { FeaturedProducts } from "@/components/featured-products";
 import { HomeReviews } from "@/components/home-reviews";
+import { MoreCollectionsButton } from "@/components/more-collections-button";
 
 const categories = [
   { name: "Winter Collection", image: "/images/images.jfif" },
@@ -38,6 +39,7 @@ const heroSlides: HeroSlide[] = [
 export default function Home() {
   return (
     <div>
+      <MoreCollectionsButton />
       <HeroCarousel slides={heroSlides} />
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
