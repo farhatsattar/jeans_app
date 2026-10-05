@@ -15,8 +15,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Clothhub - Pakistani Stitched Clothes",
+  title: "Haa-Meem - Pakistani Stitched Clothes",
   description: "Shop Winter Collection, Cotton Elegant Embroidery Suit, Jeans / Trousers, Fancy Wear, Jewelry and Handbags — premium Pakistani fashion by Haa-Meem.",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
