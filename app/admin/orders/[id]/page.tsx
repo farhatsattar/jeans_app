@@ -5,13 +5,14 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
 import Image from "next/image";
-import { ArrowLeft, Loader2, Printer } from "lucide-react";
+import { ArrowLeft, Loader2, Printer, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { OrderStatusSelect } from "@/components/admin/order-status-select";
-import { getOrder, updateOrderStatus } from "@/lib/firebase/orders";
+import { ConfirmDialog } from "@/components/admin/confirm-dialog";
+import { deleteOrder, getOrder, updateOrderStatus } from "@/lib/firebase/orders";
 import { Order, OrderStatus } from "@/types/admin";
 import { toast } from "sonner";
 
@@ -22,6 +23,8 @@ export default function OrderDetailPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     loadOrder();
@@ -61,6 +64,21 @@ export default function OrderDetailPage() {
     window.print();
   };
 
+  const handleDelete = async () => {
+    if (!order) return;
+    setDeleting(true);
+    try {
+      await deleteOrder(order.id);
+      toast.success("Order deleted");
+      router.push("/admin/orders");
+    } catch {
+      toast.error("Failed to delete order");
+    } finally {
+      setDeleting(false);
+      setDeleteOpen(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex h-96 items-center justify-center">
@@ -97,6 +115,16 @@ export default function OrderDetailPage() {
             <Printer className="mr-2 size-4" />
             Print Invoice
           </Button>
+          {(order.status === "delivered" || order.status === "cancelled") && (
+            <Button
+              variant="destructive"
+              onClick={() => setDeleteOpen(true)}
+              disabled={deleting}
+            >
+              <Trash2 className="mr-2 size-4" />
+              Delete Order
+            </Button>
+          )}
         </div>
       </div>
 
@@ -191,6 +219,16 @@ export default function OrderDetailPage() {
           </Card>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        title="Delete order?"
+        description="This delivered/cancelled order will be permanently deleted. This action cannot be undone."
+        confirmText="Delete"
+        variant="destructive"
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

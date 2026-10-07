@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import Link from "next/link";
-import { Eye } from "lucide-react";
+import { Eye, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/admin/data-table";
 import { StatusBadge } from "@/components/admin/status-badge";
+import { ConfirmDialog } from "@/components/admin/confirm-dialog";
 import {
   Select,
   SelectContent,
@@ -14,13 +15,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getAllOrders } from "@/lib/firebase/orders";
-import { Order, OrderStatus } from "@/types/admin";
+import { getAllOrders, deleteOrder } from "@/lib/firebase/orders";
+import { Order } from "@/types/admin";
+import { toast } from "sonner";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     loadOrders();
@@ -41,6 +45,21 @@ export default function OrdersPage() {
     if (statusFilter !== "all" && order.status !== statusFilter) return false;
     return true;
   });
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    setDeleting(true);
+    try {
+      await deleteOrder(deleteId);
+      setOrders((prev) => prev.filter((order) => order.id !== deleteId));
+      toast.success("Order deleted");
+    } catch {
+      toast.error("Failed to delete order");
+    } finally {
+      setDeleting(false);
+      setDeleteId(null);
+    }
+  };
 
   const columns = [
     {
@@ -89,13 +108,25 @@ export default function OrdersPage() {
     {
       key: "actions",
       header: "Actions",
-      className: "w-20",
+      className: "w-28",
       render: (order: Order) => (
-        <Button variant="ghost" size="icon" asChild>
-          <Link href={`/admin/orders/${order.id}`}>
-            <Eye className="size-4" />
-          </Link>
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="icon" asChild>
+            <Link href={`/admin/orders/${order.id}`}>
+              <Eye className="size-4" />
+            </Link>
+          </Button>
+          {(order.status === "delivered" || order.status === "cancelled") && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setDeleteId(order.id)}
+              aria-label="Delete order"
+            >
+              <Trash2 className="size-4 text-red-500" />
+            </Button>
+          )}
+        </div>
       ),
     },
   ];
@@ -133,6 +164,18 @@ export default function OrdersPage() {
         searchPlaceholder="Search by customer..."
         emptyMessage="No orders found"
         loading={loading}
+      />
+
+      <ConfirmDialog
+        open={Boolean(deleteId)}
+        onOpenChange={(open) => {
+          if (!open) setDeleteId(null);
+        }}
+        title="Delete order?"
+        description="This delivered/cancelled order will be permanently deleted. This action cannot be undone."
+        confirmText="Delete"
+        variant="destructive"
+        onConfirm={handleDelete}
       />
     </div>
   );

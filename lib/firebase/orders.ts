@@ -5,6 +5,7 @@ import {
   getDoc,
   addDoc,
   updateDoc,
+  deleteDoc,
   query,
   orderBy,
   where,
@@ -71,4 +72,8 @@ export async function updateOrderStatus(id: string, status: OrderStatus): Promis
     status,
     updatedAt: serverTimestamp(),
   });
+}
+
+export async function deleteOrder(id: string): Promise<void> {
+  await deleteDoc(doc(db, COLLECTION, id));
 }
