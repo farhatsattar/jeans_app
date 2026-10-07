@@ -16,7 +16,7 @@ import {
   getReviewsByProduct,
   type ProductReview,
 } from "@/lib/firebase/reviews";
-import { uploadImage } from "@/lib/firebase/storage";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 
 function Stars({
   rating,
@@ -74,9 +74,11 @@ function Stars({
 export function ProductReviews({
   productId,
   productName,
+  productCategory,
 }: {
   productId: string;
   productName: string;
+  productCategory?: string;
 }) {
   const [reviews, setReviews] = useState<ProductReview[]>([]);
   const [loading, setLoading] = useState(true);
@@ -139,7 +141,7 @@ export function ProductReviews({
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const user = auth.currentUser;
+    const user = auth?.currentUser ?? null;
     const customerName =
       name.trim() ||
       user?.displayName?.trim() ||
@@ -166,21 +168,26 @@ export function ProductReviews({
     try {
       const guestId =
         typeof crypto !== "undefined" && "randomUUID" in crypto
-          ? crypto.randomUUID()
-          : `guest_${Date.now()}`;
+          ? `guest-${crypto.randomUUID()}`
+          : `guest-${Date.now()}`;
 
       let imageUrl: string | undefined;
 
       if (imageFile) {
-        imageUrl = await uploadImage(
-          imageFile,
-          `reviews/${productId}/${user?.uid || guestId}_${Date.now()}_${imageFile.name}`
-        );
+        try {
+          imageUrl = await uploadToCloudinary(imageFile, "clothhub/products");
+        } catch (uploadError) {
+          console.error("Review image upload failed:", uploadError);
+          toast.error(
+            "Photo upload failed. Submitting review without photo."
+          );
+        }
       }
 
       await createReview({
         productId,
         productName,
+        productCategory,
         customerId: user?.uid || guestId,
         customerName,
         customerEmail: user?.email || "",
@@ -198,7 +205,15 @@ export function ProductReviews({
       toast.success("Review submitted. Thank you!");
     } catch (error) {
       console.error("Failed to submit review:", error);
-      toast.error("Failed to submit review. Please try again.");
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Failed to submit review. Please try again.";
+      toast.error(
+        message.includes("permission") || message.includes("insufficient")
+          ? "Review blocked by Firebase permissions. Publish reviews rules in Firebase Console."
+          : message
+      );
     } finally {
       setSubmitting(false);
     }

@@ -2,7 +2,6 @@ import {
   addDoc,
   collection,
   getDocs,
-  orderBy,
   query,
   serverTimestamp,
   Timestamp,
@@ -14,6 +13,7 @@ export interface ProductReview {
   id: string;
   productId: string;
   productName: string;
+  productCategory?: string;
   customerId: string;
   customerName: string;
   customerEmail: string;
@@ -30,6 +30,7 @@ function transformReview(id: string, data: Record<string, unknown>): ProductRevi
     id,
     productId: data.productId as string,
     productName: (data.productName as string) || "",
+    productCategory: (data.productCategory as string) || undefined,
     customerId: data.customerId as string,
     customerName: (data.customerName as string) || "Customer",
     customerEmail: (data.customerEmail as string) || "",
@@ -43,35 +44,36 @@ function transformReview(id: string, data: Record<string, unknown>): ProductRevi
 }
 
 export async function getReviewsByProduct(productId: string): Promise<ProductReview[]> {
+  // Single-field query avoids composite index requirement; sort newest-first in app
   const q = query(
     collection(db, COLLECTION),
-    where("productId", "==", productId),
-    orderBy("createdAt", "desc")
+    where("productId", "==", productId)
   );
 
-  try {
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map((docSnap) => transformReview(docSnap.id, docSnap.data()));
-  } catch (error) {
-    // Fallback if composite index is missing — still return reviews
-    console.error("Ordered reviews query failed, falling back:", error);
-    const fallback = query(
-      collection(db, COLLECTION),
-      where("productId", "==", productId)
+  const snapshot = await getDocs(q);
+  return snapshot.docs
+    .map((docSnap) => transformReview(docSnap.id, docSnap.data()))
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
-    const snapshot = await getDocs(fallback);
-    return snapshot.docs
-      .map((docSnap) => transformReview(docSnap.id, docSnap.data()))
-      .sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-  }
+}
+
+export async function getLatestReviews(limitCount = 12): Promise<ProductReview[]> {
+  const snapshot = await getDocs(collection(db, COLLECTION));
+  return snapshot.docs
+    .map((docSnap) => transformReview(docSnap.id, docSnap.data()))
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
+    .slice(0, limitCount);
 }
 
 export async function createReview(data: {
   productId: string;
   productName: string;
+  productCategory?: string;
   customerId: string;
   customerName: string;
   customerEmail: string;
@@ -89,6 +91,10 @@ export async function createReview(data: {
     comment: data.comment.trim(),
     createdAt: serverTimestamp(),
   };
+
+  if (data.productCategory) {
+    payload.productCategory = data.productCategory;
+  }
 
   if (data.imageUrl) {
     payload.imageUrl = data.imageUrl;

@@ -34,9 +34,21 @@ export default function CheckoutPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [city, setCity] = useState("");
+  const [address, setAddress] = useState("");
+  const [notes, setNotes] = useState("");
 
   useEffect(() => {
-    setCurrentUser(auth?.currentUser ?? null);
+    const user = auth?.currentUser ?? null;
+    setCurrentUser(user);
+
+    if (user) {
+      setFullName((prev) => prev || user.displayName?.trim() || "");
+      setEmail((prev) => prev || user.email || "");
+    }
   }, []);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -49,43 +61,39 @@ export default function CheckoutPage() {
 
     setIsSubmitting(true);
 
-    const formData = new FormData(event.currentTarget);
     const user = auth?.currentUser ?? currentUser;
+    const trimmedName = fullName.trim();
+    const trimmedEmail = email.trim();
+    const trimmedCity = city.trim();
+    const trimmedAddress = address.trim();
+    const trimmedPhone = phone.trim();
+    const trimmedNotes = notes.trim();
 
-    const fullName = String(formData.get("name") ?? "").trim();
-    const email = String(
-      formData.get("email") ?? user?.email ?? ""
-    ).trim();
-    const city = String(formData.get("city") ?? "").trim();
-    const address = String(formData.get("address") ?? "").trim();
-    const phone = String(formData.get("phone") ?? "").trim();
-    const notes = String(formData.get("notes") ?? "").trim();
-
-    if (!fullName) {
+    if (!trimmedName) {
       toast.error("Please enter your full name.");
       setIsSubmitting(false);
       return;
     }
 
-    if (!email) {
+    if (!trimmedEmail) {
       toast.error("Please enter your email.");
       setIsSubmitting(false);
       return;
     }
 
-    if (!phone) {
+    if (!trimmedPhone) {
       toast.error("Please enter your phone number.");
       setIsSubmitting(false);
       return;
     }
 
-    if (!city) {
+    if (!trimmedCity) {
       toast.error("Please enter your city.");
       setIsSubmitting(false);
       return;
     }
 
-    if (!address) {
+    if (!trimmedAddress) {
       toast.error("Please enter your delivery address.");
       setIsSubmitting(false);
       return;
@@ -99,8 +107,8 @@ export default function CheckoutPage() {
 
       const orderId = await createOrder({
         customerId: user?.uid || guestId,
-        customerName: fullName,
-        customerEmail: email,
+        customerName: trimmedName,
+        customerEmail: trimmedEmail,
         items: cart.map((item) => ({
           productId: item.productId,
           name: item.name,
@@ -115,10 +123,12 @@ export default function CheckoutPage() {
         total: finalTotal,
         status: "pending",
         shippingAddress: {
-          fullName,
-          address: notes ? `${address}\nNote: ${notes}` : address,
-          city,
-          phone,
+          fullName: trimmedName,
+          address: trimmedNotes
+            ? `${trimmedAddress}\nNote: ${trimmedNotes}`
+            : trimmedAddress,
+          city: trimmedCity,
+          phone: trimmedPhone,
         },
       });
 
@@ -169,7 +179,8 @@ export default function CheckoutPage() {
                 name="name"
                 type="text"
                 placeholder="Ayesha Khan"
-                defaultValue={currentUser?.displayName ?? ""}
+                value={fullName ?? ""}
+                onValueChange={setFullName}
                 required
               />
             </div>
@@ -180,7 +191,8 @@ export default function CheckoutPage() {
                 name="email"
                 type="email"
                 placeholder="you@example.com"
-                defaultValue={currentUser?.email ?? ""}
+                value={email ?? ""}
+                onValueChange={setEmail}
                 required
               />
             </div>
@@ -191,6 +203,8 @@ export default function CheckoutPage() {
                 name="phone"
                 type="tel"
                 placeholder="0300 0000000"
+                value={phone ?? ""}
+                onValueChange={setPhone}
                 required
               />
             </div>
@@ -209,6 +223,8 @@ export default function CheckoutPage() {
                 name="city"
                 type="text"
                 placeholder="Karachi"
+                value={city ?? ""}
+                onValueChange={setCity}
                 required
               />
             </div>
@@ -219,6 +235,8 @@ export default function CheckoutPage() {
                 name="address"
                 type="text"
                 placeholder="House / street / area"
+                value={address ?? ""}
+                onValueChange={setAddress}
                 required
               />
             </div>
@@ -229,6 +247,8 @@ export default function CheckoutPage() {
                 name="notes"
                 rows={3}
                 placeholder="Any special delivery instructions..."
+                value={notes ?? ""}
+                onChange={(event) => setNotes(event.target.value)}
               />
             </div>
           </div>

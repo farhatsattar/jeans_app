@@ -1,50 +1,44 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { ChevronLeft, ChevronRight, Quote, Star } from "lucide-react";
 
-const reviews = [
+import {
+  getLatestReviews,
+  type ProductReview,
+} from "@/lib/firebase/reviews";
+import { fetchStoreProducts } from "@/lib/storefront-products";
+import { getReviewCategoryLabel } from "@/lib/review-labels";
+
+const fallbackReviews: Array<{
+  id: string;
+  name: string;
+  rating: number;
+  product: string;
+  text: string;
+  imageUrl?: string;
+}> = [
   {
+    id: "fallback-1",
     name: "Ayesha Khan",
-    city: "Karachi",
     rating: 5,
     product: "Winter Collection",
     text: "Fabric quality bohot zabardast hai. Winter suit soft aur warm dono hai — cold weather ke liye perfect. Size chart bilkul accurate thi.",
   },
   {
+    id: "fallback-2",
     name: "Fatima Ali",
-    city: "Lahore",
     rating: 5,
-    product: "Cotton Elegant Embroidery Suit",
+    product: "Cotton",
     text: "Cotton elegant embroidery suit ka fit excellent hai. Ordering se delivery tak experience smooth raha. Definitely reorder karungi.",
   },
   {
+    id: "fallback-3",
     name: "Zainab Ahmed",
-    city: "Islamabad",
     rating: 5,
     product: "Jeans / Trousers",
     text: "Jeans ka fit zabardast hai — soft aur stylish. Size chart follow kiya aur perfect fit mila.",
-  },
-  {
-    name: "Hira Malik",
-    city: "Karachi",
-    rating: 4,
-    product: "Fancy Wear",
-    text: "Fancy wear lehenga wedding ke liye liya. Detailing premium feel deti hai. Packaging bhi bohot achi thi.",
-  },
-  {
-    name: "Sana Raza",
-    city: "Multan",
-    rating: 5,
-    product: "Winter Collection",
-    text: "Winter collection 3pc ordered kiya. Stitching clean hai aur size guide follow karne se perfect fit mila.",
-  },
-  {
-    name: "Maryam Iqbal",
-    city: "Faisalabad",
-    rating: 5,
-    product: "Cotton Elegant Embroidery Suit",
-    text: "Daily wear cotton embroidery suits comfortable aur stylish hain. Price ke hisaab se quality best lagi.",
   },
 ];
 
@@ -65,10 +59,51 @@ function Stars({ rating }: { rating: number }) {
   );
 }
 
+function toCardReview(
+  review: ProductReview,
+  categoryByProductId: Record<string, string>
+) {
+  const category =
+    review.productCategory || categoryByProductId[review.productId];
+
+  return {
+    id: review.id,
+    name: review.customerName,
+    rating: review.rating,
+    product: getReviewCategoryLabel(category, review.productName),
+    text: review.comment,
+    imageUrl: review.imageUrl,
+  };
+}
+
 export function HomeReviews() {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [reviews, setReviews] = useState(fallbackReviews);
+
+  useEffect(() => {
+    async function loadReviews() {
+      try {
+        const [data, products] = await Promise.all([
+          getLatestReviews(12),
+          fetchStoreProducts(),
+        ]);
+
+        if (data.length === 0) return;
+
+        const categoryByProductId = Object.fromEntries(
+          products.map((product) => [product.id, product.category])
+        );
+
+        setReviews(data.map((review) => toCardReview(review, categoryByProductId)));
+      } catch (error) {
+        console.error("Failed to load homepage reviews:", error);
+      }
+    }
+
+    loadReviews();
+  }, []);
 
   const updateScrollButtons = () => {
     const el = scrollerRef.current;
@@ -101,7 +136,10 @@ export function HomeReviews() {
       if (atEnd) {
         el.scrollTo({ left: 0, behavior: "smooth" });
       } else {
-        el.scrollBy({ left: Math.min(360, el.clientWidth * 0.85), behavior: "smooth" });
+        el.scrollBy({
+          left: Math.min(360, el.clientWidth * 0.85),
+          behavior: "smooth",
+        });
       }
     }, 4000);
 
@@ -110,7 +148,12 @@ export function HomeReviews() {
       window.removeEventListener("resize", updateScrollButtons);
       window.clearInterval(autoplay);
     };
-  }, []);
+  }, [reviews]);
+
+  const averageRating =
+    reviews.length > 0
+      ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
+      : 0;
 
   return (
     <section className="relative overflow-hidden border-y bg-muted/30">
@@ -126,11 +169,16 @@ export function HomeReviews() {
               What Our Customers Say
             </h2>
             <p className="mt-3 text-muted-foreground">
-              Real feedback from women who shop Winter Collection, Embroidery Suits, Jeans and Fancy Wear with us.
+              Real feedback from customers who shop Winter Collection, Cotton,
+              Jeans and Fancy Wear with us.
             </p>
             <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
-              <Stars rating={5} />
-              <span>4.8 average from 300+ reviews</span>
+              <Stars rating={Math.round(averageRating) || 5} />
+              <span>
+                {reviews.length > 0
+                  ? `${averageRating.toFixed(1)} average from ${reviews.length} review${reviews.length === 1 ? "" : "s"}`
+                  : "Customer reviews"}
+              </span>
             </div>
           </div>
 
@@ -162,7 +210,7 @@ export function HomeReviews() {
         >
           {reviews.map((review) => (
             <article
-              key={review.name}
+              key={review.id}
               className="group relative flex w-[85%] shrink-0 snap-start flex-col border border-border/80 bg-background p-6 transition-shadow hover:shadow-md sm:w-[340px]"
             >
               <Quote className="mb-4 size-7 text-muted-foreground/40 transition-colors group-hover:text-muted-foreground/70" />
@@ -170,12 +218,24 @@ export function HomeReviews() {
               <p className="mt-4 flex-1 text-[15px] leading-relaxed text-foreground/90">
                 &ldquo;{review.text}&rdquo;
               </p>
-              <div className="mt-6 flex items-center justify-between border-t pt-4">
-                <div>
-                  <p className="font-medium">{review.name}</p>
-                  <p className="text-xs text-muted-foreground">{review.city}</p>
+
+              {review.imageUrl && (
+                <div className="relative mt-4 h-36 w-full overflow-hidden rounded-md bg-muted/30">
+                  <Image
+                    src={review.imageUrl}
+                    alt={`Review by ${review.name}`}
+                    fill
+                    className="object-cover"
+                    sizes="340px"
+                  />
                 </div>
-                <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+              )}
+
+              <div className="mt-6 flex items-center justify-between gap-3 border-t pt-4">
+                <div className="min-w-0">
+                  <p className="font-medium">{review.name}</p>
+                </div>
+                <span className="max-w-[50%] truncate rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
                   {review.product}
                 </span>
               </div>
