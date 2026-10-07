@@ -1,31 +1,55 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    // Product images: Anyone can read
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    function isUnder5MB() {
+      return request.resource.size < 5 * 1024 * 1024;
+    }
+
+    function isAdmin() {
+      return request.auth != null
+        && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Product images: public read; authenticated uploads
     match /product-images/{productId}/{filename} {
-      allow read: if true; // Public can view product images
-      allow write: if request.auth != null && request.auth.uid != null;
-      // Admins can upload and manage
-      allow create: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow read: if true;
+      allow write: if request.auth != null && isImage() && isUnder5MB();
+    }
+
+    // Admin product uploads path used by app
+    match /products/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null && isImage() && isUnder5MB();
+    }
+
+    // Guest + logged-in review photos
+    match /reviews/{productId}/{filename} {
+      allow read: if true;
+      allow create: if isImage() && isUnder5MB();
+      allow update, delete: if isAdmin();
     }
 
     // User uploads: Users can only access their own
     match /user-uploads/{userId}/{filename} {
       allow read: if request.auth != null && request.auth.uid == userId;
-      allow create: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId && isImage() && isUnder5MB();
       allow delete: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Admin uploads: Admins can upload anything
+    // Admin uploads
     match /admin-uploads/{path=**} {
-      allow read: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-      allow write: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
-    // General: Secure default - only authenticated users can upload
+    // Default: public read for existing assets; write admin-only
     match /{allPaths=**} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow read: if true;
+      allow write: if isAdmin();
     }
   }
 }

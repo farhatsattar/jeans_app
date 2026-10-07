@@ -180,22 +180,21 @@ export function Navbar() {
 
             <ThemeToggle />
 
-            <Link href="/cart">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="relative"
-                aria-label="Cart"
-              >
-                <ShoppingBag className="size-5" />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative"
+              aria-label="Cart"
+              onClick={() => useShopStore.getState().openCart()}
+            >
+              <ShoppingBag className="size-5" />
 
-                {cartCount > 0 && (
-                  <Badge className="absolute -right-2 -top-2 flex size-5 items-center justify-center rounded-full bg-primary p-0 text-[10px] text-primary-foreground">
-                    {cartCount}
-                  </Badge>
-                )}
-              </Button>
-            </Link>
+              {cartCount > 0 && (
+                <Badge className="absolute -right-2 -top-2 flex size-5 items-center justify-center rounded-full bg-primary p-0 text-[10px] text-primary-foreground">
+                  {cartCount}
+                </Badge>
+              )}
+            </Button>
           </div>
 
           {/* Centered Logo */}

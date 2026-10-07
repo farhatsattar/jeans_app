@@ -6,12 +6,8 @@ import { motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
 import { Product } from "@/lib/products";
 import { Button } from "@/components/ui/button";
-import { useShopStore } from "@/store/use-shop-store";
-import { toast } from "sonner";
 
 export function ProductCard({ product }: { product: Product }) {
-  const addToCart = useShopStore((state) => state.addToCart);
-
   return (
     <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.2 }} className="h-full">
       <div className="group flex h-full flex-col rounded-xl border bg-white shadow-sm transition-all duration-300 hover:shadow-lg dark:bg-card">
@@ -42,20 +38,13 @@ export function ProductCard({ product }: { product: Product }) {
             </p>
             <Button
               size="sm"
-              onClick={() => {
-                addToCart({
-                  productId: product.id,
-                  name: product.name,
-                  price: product.price,
-                  image: product.images[0],
-                  size: product.sizes[0],
-                });
-                toast.success("Added to cart");
-              }}
+              asChild
               className="rounded-full bg-black text-white hover:bg-black/90"
             >
-              <ShoppingCart className="mr-1.5 size-4" />
-              Add
+              <Link href={`/products/${product.id}`}>
+                <ShoppingCart className="mr-1.5 size-4" />
+                Add
+              </Link>
             </Button>
           </div>
         </div>

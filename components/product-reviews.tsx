@@ -2,16 +2,15 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { format } from "date-fns";
 import { ImagePlus, Loader2, Star, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { auth } from "@/lib/firebase/config";
-import { onAuthChange } from "@/lib/firebase/auth";
 import {
   createReview,
   getReviewsByProduct,
@@ -82,19 +81,12 @@ export function ProductReviews({
   const [reviews, setReviews] = useState<ProductReview[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [name, setName] = useState("");
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    const unsubscribe = onAuthChange((user) => {
-      setIsLoggedIn(Boolean(user));
-    });
-    return unsubscribe;
-  }, []);
 
   useEffect(() => {
     async function loadReviews() {
@@ -148,8 +140,14 @@ export function ProductReviews({
     event.preventDefault();
 
     const user = auth.currentUser;
-    if (!user) {
-      toast.error("Please login to write a review.");
+    const customerName =
+      name.trim() ||
+      user?.displayName?.trim() ||
+      user?.email?.split("@")[0] ||
+      "";
+
+    if (!customerName) {
+      toast.error("Please enter your name.");
       return;
     }
 
@@ -166,24 +164,26 @@ export function ProductReviews({
     setSubmitting(true);
 
     try {
+      const guestId =
+        typeof crypto !== "undefined" && "randomUUID" in crypto
+          ? crypto.randomUUID()
+          : `guest_${Date.now()}`;
+
       let imageUrl: string | undefined;
 
       if (imageFile) {
         imageUrl = await uploadImage(
           imageFile,
-          `reviews/${productId}/${user.uid}_${Date.now()}_${imageFile.name}`
+          `reviews/${productId}/${user?.uid || guestId}_${Date.now()}_${imageFile.name}`
         );
       }
 
       await createReview({
         productId,
         productName,
-        customerId: user.uid,
-        customerName:
-          user.displayName?.trim() ||
-          user.email?.split("@")[0] ||
-          "Customer",
-        customerEmail: user.email || "",
+        customerId: user?.uid || guestId,
+        customerName,
+        customerEmail: user?.email || "",
         rating,
         comment: comment.trim(),
         imageUrl,
@@ -191,6 +191,7 @@ export function ProductReviews({
 
       const refreshed = await getReviewsByProduct(productId);
       setReviews(refreshed);
+      setName("");
       setComment("");
       setRating(5);
       clearImage();
@@ -223,6 +224,18 @@ export function ProductReviews({
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border bg-muted/20 p-4">
+        <div className="space-y-2">
+          <Label htmlFor="review-name">Your name</Label>
+          <Input
+            id="review-name"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            placeholder="Ayesha Khan"
+            disabled={submitting}
+            required
+          />
+        </div>
+
         <div>
           <Label className="mb-2 block">Your rating</Label>
           <Stars rating={rating} interactive onSelect={setRating} />
@@ -236,7 +249,8 @@ export function ProductReviews({
             onChange={(event) => setComment(event.target.value)}
             placeholder="Share your experience with this product..."
             rows={4}
-            disabled={!isLoggedIn || submitting}
+            disabled={submitting}
+            required
           />
         </div>
 
@@ -273,7 +287,7 @@ export function ProductReviews({
             <Button
               type="button"
               variant="outline"
-              disabled={!isLoggedIn || submitting}
+              disabled={submitting}
               onClick={() => fileInputRef.current?.click()}
             >
               <ImagePlus className="mr-2 size-4" />
@@ -285,30 +299,20 @@ export function ProductReviews({
           </p>
         </div>
 
-        {isLoggedIn ? (
-          <Button type="submit" disabled={submitting} className="bg-black text-white hover:bg-black/90">
-            {submitting ? (
-              <>
-                <Loader2 className="mr-2 size-4 animate-spin" />
-                Submitting...
-              </>
-            ) : (
-              "Submit review"
-            )}
-          </Button>
-        ) : (
-          <div className="rounded-lg border bg-background p-3 text-sm">
-            <p className="text-muted-foreground">
-              Please login to write a review and upload a photo.
-            </p>
-            <Link
-              href="/login"
-              className="mt-2 inline-block font-medium underline underline-offset-4"
-            >
-              Login to review
-            </Link>
-          </div>
-        )}
+        <Button
+          type="submit"
+          disabled={submitting}
+          className="bg-black text-white hover:bg-black/90"
+        >
+          {submitting ? (
+            <>
+              <Loader2 className="mr-2 size-4 animate-spin" />
+              Submitting...
+            </>
+          ) : (
+            "Submit review"
+          )}
+        </Button>
       </form>
 
       <div className="space-y-4">

@@ -85,7 +85,7 @@ export async function createReview(data: {
     customerId: data.customerId,
     customerName: data.customerName,
     customerEmail: data.customerEmail,
-    rating: data.rating,
+    rating: Math.round(Number(data.rating)),
     comment: data.comment.trim(),
     createdAt: serverTimestamp(),
   };

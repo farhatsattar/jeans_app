@@ -12,7 +12,6 @@ import { SizeChart } from "@/components/size-chart";
 import { ProductCard } from "@/components/product-card";
 import { ProductReviews } from "@/components/product-reviews";
 import { useShopStore } from "@/store/use-shop-store";
-import { toast } from "sonner";
 
 const APPAREL_SIZES: ProductSize[] = ["S", "M", "L", "XL"];
 
@@ -107,16 +106,17 @@ export default function ProductDetailPage() {
   };
 
   const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i += 1) {
-      addToCart({
+    addToCart(
+      {
         productId: product.id,
         name: product.name,
         price: product.price,
         image: product.images[0],
         size,
-      });
-    }
-    toast.success("Added to cart");
+        quantity,
+      },
+      { openDrawer: true }
+    );
   };
 
   return (
