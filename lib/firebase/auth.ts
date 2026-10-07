@@ -5,6 +5,8 @@ import {
   User,
   createUserWithEmailAndPassword,
   updateProfile,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 
 import {
@@ -67,9 +69,64 @@ function getAuthErrorMessage(error: unknown): string {
     case "Firebase: Error (auth/invalid-email).":
       return "Please enter a valid email address.";
 
+    case "Firebase: Error (auth/popup-closed-by-user).":
+      return "Google sign-in was cancelled.";
+
+    case "Firebase: Error (auth/cancelled-popup-request).":
+      return "Google sign-in was cancelled.";
+
+    case "Firebase: Error (auth/popup-blocked).":
+      return "Popup was blocked. Please allow popups and try again.";
+
+    case "Firebase: Error (auth/account-exists-with-different-credential).":
+      return "An account already exists with this email using a different sign-in method.";
+
     default:
       return error.message || "Authentication failed.";
   }
+}
+
+async function resolveLoginRole(firebaseUser: User): Promise<LoginUserResult> {
+  const adminRef = doc(db, "users", firebaseUser.uid);
+  const adminSnap = await getDoc(adminRef);
+
+  if (adminSnap.exists() && adminSnap.data()?.role === "admin") {
+    return {
+      user: firebaseUser,
+      role: "admin",
+      error: null,
+    };
+  }
+
+  const customerRef = doc(db, "customers", firebaseUser.uid);
+  const customerSnap = await getDoc(customerRef);
+
+  if (customerSnap.exists()) {
+    return {
+      user: firebaseUser,
+      role: "customer",
+      error: null,
+    };
+  }
+
+  await setDoc(customerRef, {
+    uid: firebaseUser.uid,
+    email: firebaseUser.email,
+    displayName:
+      firebaseUser.displayName?.trim() ||
+      firebaseUser.email?.split("@")[0] ||
+      "Customer",
+    photoURL: firebaseUser.photoURL || null,
+    provider: "google",
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+
+  return {
+    user: firebaseUser,
+    role: "customer",
+    error: null,
+  };
 }
 
 /**
@@ -174,6 +231,33 @@ export async function loginUser(
     };
   } catch (error: unknown) {
     console.error("Login error:", error);
+
+    return {
+      user: null,
+      role: null,
+      error: getAuthErrorMessage(error),
+    };
+  }
+}
+
+/**
+ * ============================
+ * GOOGLE LOGIN / SIGNUP
+ * ============================
+ *
+ * Customers can sign in with Google.
+ * First-time Google users get a
+ * customers/{uid} profile created.
+ */
+export async function loginWithGoogle(): Promise<LoginUserResult> {
+  try {
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: "select_account" });
+
+    const credential = await signInWithPopup(auth, provider);
+    return resolveLoginRole(credential.user);
+  } catch (error: unknown) {
+    console.error("Google login error:", error);
 
     return {
       user: null,

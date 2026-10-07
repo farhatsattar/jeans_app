@@ -10,6 +10,7 @@ import { fetchStoreProduct, fetchStoreProducts } from "@/lib/storefront-products
 import { Button } from "@/components/ui/button";
 import { SizeChart } from "@/components/size-chart";
 import { ProductCard } from "@/components/product-card";
+import { ProductReviews } from "@/components/product-reviews";
 import { useShopStore } from "@/store/use-shop-store";
 import { toast } from "sonner";
 
@@ -268,15 +269,7 @@ export default function ProductDetailPage() {
                 </div>
               )}
 
-            <div className="mt-6 space-y-3 border p-4">
-              <h3 className="font-medium">Customer Reviews</h3>
-              <p className="text-sm text-muted-foreground">
-                &ldquo;Excellent fit and fabric quality. Looks premium and feels comfortable.&rdquo;
-              </p>
-              <p className="text-sm text-muted-foreground">
-                &ldquo;Size chart accurate thi. Definitely buying another color.&rdquo;
-              </p>
-            </div>
+            <ProductReviews productId={product.id} productName={product.name} />
           </div>
         </div>
       </section>
