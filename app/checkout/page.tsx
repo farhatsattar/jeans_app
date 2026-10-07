@@ -1,9 +1,10 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import type { User } from "firebase/auth";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -32,7 +33,11 @@ export default function CheckoutPage() {
   const finalTotal = total;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const currentUser = auth.currentUser;
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    setCurrentUser(auth?.currentUser ?? null);
+  }, []);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -45,10 +50,11 @@ export default function CheckoutPage() {
     setIsSubmitting(true);
 
     const formData = new FormData(event.currentTarget);
+    const user = auth?.currentUser ?? currentUser;
 
     const fullName = String(formData.get("name") ?? "").trim();
     const email = String(
-      formData.get("email") ?? currentUser?.email ?? ""
+      formData.get("email") ?? user?.email ?? ""
     ).trim();
     const city = String(formData.get("city") ?? "").trim();
     const address = String(formData.get("address") ?? "").trim();
@@ -92,7 +98,7 @@ export default function CheckoutPage() {
           : `guest-${Date.now()}`;
 
       const orderId = await createOrder({
-        customerId: currentUser?.uid || guestId,
+        customerId: user?.uid || guestId,
         customerName: fullName,
         customerEmail: email,
         items: cart.map((item) => ({
