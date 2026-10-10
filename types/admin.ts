@@ -54,6 +54,7 @@ export interface Product {
   sku: string;
   isFeatured: boolean;
   isActive: boolean;
+  isSoldOut?: boolean;
   kameezChart?: KameezSizeSpec[];
   shalwarChart?: ShalwarSizeSpec;
   createdAt: string;

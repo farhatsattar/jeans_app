@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import Link from "next/link";
 import { Eye } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/admin/data-table";
 import { getAllCustomers } from "@/lib/firebase/customers";
@@ -21,8 +22,10 @@ export default function CustomersPage() {
     try {
       const data = await getAllCustomers();
       setCustomers(data);
-    } catch {
-      console.error("Failed to load customers");
+    } catch (error) {
+      console.error("Failed to load customers:", error);
+      toast.error("Failed to load customers");
+      setCustomers([]);
     } finally {
       setLoading(false);
     }
@@ -34,8 +37,10 @@ export default function CustomersPage() {
       header: "Customer",
       render: (customer: Customer) => (
         <div>
-          <p className="font-medium">{customer.name}</p>
-          <p className="text-xs text-muted-foreground">{customer.email}</p>
+          <p className="font-medium">{customer.name || "Customer"}</p>
+          <p className="text-xs text-muted-foreground">
+            {customer.email || "-"}
+          </p>
         </div>
       ),
     },
@@ -49,25 +54,30 @@ export default function CustomersPage() {
     {
       key: "orders",
       header: "Orders",
-      render: (customer: Customer) => customer.totalOrders,
+      render: (customer: Customer) => customer.totalOrders || 0,
     },
     {
       key: "spent",
       header: "Total Spent",
       render: (customer: Customer) => (
         <span className="font-medium">
-          Rs.{customer.totalSpent.toLocaleString()}
+          Rs.{(customer.totalSpent || 0).toLocaleString()}
         </span>
       ),
     },
     {
       key: "joined",
       header: "Joined",
-      render: (customer: Customer) => (
-        <span className="text-muted-foreground">
-          {format(new Date(customer.createdAt), "MMM d, yyyy")}
-        </span>
-      ),
+      render: (customer: Customer) => {
+        const date = new Date(customer.createdAt);
+        return (
+          <span className="text-muted-foreground">
+            {Number.isNaN(date.getTime())
+              ? "-"
+              : format(date, "MMM d, yyyy")}
+          </span>
+        );
+      },
     },
     {
       key: "actions",
@@ -94,7 +104,14 @@ export default function CustomersPage() {
 
       <DataTable
         data={customers as unknown as Record<string, unknown>[]}
-        columns={columns as unknown as { key: string; header: string; render?: (item: Record<string, unknown>) => React.ReactNode; className?: string }[]}
+        columns={
+          columns as unknown as {
+            key: string;
+            header: string;
+            render?: (item: Record<string, unknown>) => React.ReactNode;
+            className?: string;
+          }[]
+        }
         keyExtractor={(item) => (item as unknown as Customer).id}
         searchKey="name"
         searchPlaceholder="Search customers..."

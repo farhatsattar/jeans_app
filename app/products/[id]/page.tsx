@@ -72,7 +72,8 @@ export default function ProductDetailPage() {
   }, [product]);
 
   const isSoldOut =
-    typeof product?.stock === "number" ? product.stock <= 0 : false;
+    Boolean(product?.isSoldOut) ||
+    (typeof product?.stock === "number" && product.stock <= 0);
 
   const maxQuantity =
     typeof product?.stock === "number" && product.stock > 0
@@ -286,7 +287,11 @@ export default function ProductDetailPage() {
             {product.category !== "Jewelry" &&
               product.category !== "Handbags / Purse" && (
                 <div className="mt-8">
-                  <SizeChart selectedSize={size} />
+                  <SizeChart
+                    selectedSize={size}
+                    kameezChart={product.kameezChart}
+                    shalwarChart={product.shalwarChart}
+                  />
                 </div>
               )}
 

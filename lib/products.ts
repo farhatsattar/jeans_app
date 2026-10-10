@@ -24,6 +24,20 @@ export type ProductColor =
   | "Violet";
 export type ProductSize = "S" | "M" | "L" | "XL" | "One Size";
 
+export interface StoreKameezSizeSpec {
+  size: ProductSize;
+  chest: number;
+  length: number;
+  hip: number;
+  flair: number;
+}
+
+export interface StoreShalwarSizeSpec {
+  length: string;
+  stretchBelt: string;
+  pancha: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -38,6 +52,9 @@ export interface Product {
   stock?: number;
   isFeatured?: boolean;
   isNew?: boolean;
+  isSoldOut?: boolean;
+  kameezChart?: StoreKameezSizeSpec[];
+  shalwarChart?: StoreShalwarSizeSpec;
 }
 
 export const products: Product[] = [
@@ -59,7 +76,6 @@ export const products: Product[] = [
     rating: 4.8,
     reviews: 42,
     isFeatured: true,
-    isNew: true,
   },
   {
     id: "classic-khaddar-suit",
@@ -104,7 +120,6 @@ export const products: Product[] = [
     rating: 4.7,
     reviews: 56,
     isFeatured: true,
-    isNew: true,
   },
   {
     id: "daily-cotton-embroidery-suit",
@@ -131,7 +146,6 @@ export const products: Product[] = [
     rating: 4.4,
     reviews: 62,
     isFeatured: true,
-    isNew: true,
   },
   {
     id: "classic-blue-jeans",
@@ -158,7 +172,6 @@ export const products: Product[] = [
     rating: 4.7,
     reviews: 58,
     isFeatured: true,
-    isNew: true,
   },
   {
     id: "wide-leg-denim-trousers",
@@ -185,7 +198,6 @@ export const products: Product[] = [
     rating: 4.9,
     reviews: 34,
     isFeatured: true,
-    isNew: true,
   },
   {
     id: "embroidery-fancy-suit",
@@ -199,7 +211,6 @@ export const products: Product[] = [
     rating: 4.8,
     reviews: 112,
     isFeatured: true,
-    isNew: true,
   },
   {
     id: "velvet-fancy-outfit",
@@ -229,7 +240,6 @@ export const products: Product[] = [
     rating: 4.8,
     reviews: 47,
     isFeatured: true,
-    isNew: true,
   },
   {
     id: "kundan-bridal-jewelry-set",
@@ -262,7 +272,6 @@ export const products: Product[] = [
     rating: 4.6,
     reviews: 51,
     isFeatured: true,
-    isNew: true,
   },
   {
     id: "embroidered-clutch-purse",

@@ -4,8 +4,12 @@ import { Product as StoreProduct, products as fallbackProducts } from "@/lib/pro
 
 function toStoreProduct(product: AdminProduct): StoreProduct {
   const createdAt = new Date(product.createdAt);
+  const createdTime = createdAt.getTime();
+  // NEW badge only for products added in the last 15 days
   const isNew =
-    Date.now() - createdAt.getTime() < 1000 * 60 * 60 * 24 * 30;
+    Number.isFinite(createdTime) &&
+    createdTime <= Date.now() &&
+    Date.now() - createdTime < 1000 * 60 * 60 * 24 * 15;
 
   const validImages = product.images.filter(
     (image): image is string => Boolean(image?.trim())
@@ -25,6 +29,11 @@ function toStoreProduct(product: AdminProduct): StoreProduct {
     stock: typeof product.stock === "number" ? product.stock : undefined,
     isFeatured: Boolean(product.isFeatured),
     isNew,
+    isSoldOut:
+      Boolean(product.isSoldOut) ||
+      (typeof product.stock === "number" && product.stock <= 0),
+    kameezChart: product.kameezChart,
+    shalwarChart: product.shalwarChart,
   };
 }
 

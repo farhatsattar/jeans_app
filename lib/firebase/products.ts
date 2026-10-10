@@ -33,6 +33,7 @@ function transformProduct(id: string, data: Record<string, unknown>): Product {
     sku: data.sku as string,
     isFeatured: data.isFeatured as boolean,
     isActive: data.isActive as boolean,
+    isSoldOut: Boolean(data.isSoldOut),
     kameezChart: data.kameezChart as Product["kameezChart"],
     shalwarChart: data.shalwarChart as Product["shalwarChart"],
     createdAt: (data.createdAt as Timestamp)?.toDate?.()?.toISOString() || (data.createdAt as string) || new Date().toISOString(),

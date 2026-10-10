@@ -109,13 +109,19 @@ async function resolveLoginRole(firebaseUser: User): Promise<LoginUserResult> {
     };
   }
 
+  const googleName =
+    firebaseUser.displayName?.trim() ||
+    firebaseUser.email?.split("@")[0] ||
+    "Customer";
+
   await setDoc(customerRef, {
     uid: firebaseUser.uid,
     email: firebaseUser.email,
-    displayName:
-      firebaseUser.displayName?.trim() ||
-      firebaseUser.email?.split("@")[0] ||
-      "Customer",
+    name: googleName,
+    displayName: googleName,
+    phone: "",
+    totalOrders: 0,
+    totalSpent: 0,
     photoURL: firebaseUser.photoURL || null,
     provider: "google",
     createdAt: serverTimestamp(),
@@ -444,7 +450,11 @@ export async function signUpCustomer(
     await setDoc(customerRef, {
       uid: result.user.uid,
       email: result.user.email,
+      name: displayName.trim(),
       displayName: displayName.trim(),
+      phone: "",
+      totalOrders: 0,
+      totalSpent: 0,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });

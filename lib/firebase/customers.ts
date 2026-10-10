@@ -16,21 +16,47 @@ import { Customer } from "@/types/admin";
 const COLLECTION = "customers";
 
 function transformCustomer(id: string, data: Record<string, unknown>): Customer {
+  const createdAtValue = data.createdAt as Timestamp | string | undefined;
+  const createdAt =
+    typeof createdAtValue === "object" && createdAtValue && "toDate" in createdAtValue
+      ? createdAtValue.toDate().toISOString()
+      : typeof createdAtValue === "string"
+        ? createdAtValue
+        : new Date().toISOString();
+
   return {
     id,
-    name: data.name as string,
-    email: data.email as string,
-    phone: data.phone as string,
-    totalOrders: data.totalOrders as number,
-    totalSpent: data.totalSpent as number,
-    createdAt: (data.createdAt as Timestamp)?.toDate?.()?.toISOString() || new Date().toISOString(),
+    name:
+      (data.name as string) ||
+      (data.displayName as string) ||
+      (data.email as string)?.split("@")[0] ||
+      "Customer",
+    email: (data.email as string) || "",
+    phone: (data.phone as string) || "",
+    totalOrders: Number(data.totalOrders) || 0,
+    totalSpent: Number(data.totalSpent) || 0,
+    createdAt,
   };
 }
 
 export async function getAllCustomers(): Promise<Customer[]> {
-  const q = query(collection(db, COLLECTION), orderBy("createdAt", "desc"));
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => transformCustomer(doc.id, doc.data()));
+  try {
+    const q = query(collection(db, COLLECTION), orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((docSnap) =>
+      transformCustomer(docSnap.id, docSnap.data())
+    );
+  } catch (error) {
+    // Fallback when index/createdAt is missing
+    console.error("Ordered customers query failed, falling back:", error);
+    const snapshot = await getDocs(collection(db, COLLECTION));
+    return snapshot.docs
+      .map((docSnap) => transformCustomer(docSnap.id, docSnap.data()))
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+  }
 }
 
 export async function getCustomer(id: string): Promise<Customer | null> {
@@ -39,7 +65,9 @@ export async function getCustomer(id: string): Promise<Customer | null> {
   return transformCustomer(docSnap.id, docSnap.data());
 }
 
-export async function createCustomer(data: Omit<Customer, "id" | "createdAt">): Promise<string> {
+export async function createCustomer(
+  data: Omit<Customer, "id" | "createdAt">
+): Promise<string> {
   const docRef = await addDoc(collection(db, COLLECTION), {
     ...data,
     createdAt: serverTimestamp(),
@@ -47,6 +75,9 @@ export async function createCustomer(data: Omit<Customer, "id" | "createdAt">): 
   return docRef.id;
 }
 
-export async function updateCustomer(id: string, data: Partial<Customer>): Promise<void> {
+export async function updateCustomer(
+  id: string,
+  data: Partial<Customer>
+): Promise<void> {
   await updateDoc(doc(db, COLLECTION, id), data);
 }

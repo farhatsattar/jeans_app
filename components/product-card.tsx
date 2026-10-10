@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button";
 
 export function ProductCard({ product }: { product: Product }) {
   const isSoldOut =
-    typeof product.stock === "number" ? product.stock <= 0 : false;
+    Boolean(product.isSoldOut) ||
+    (typeof product.stock === "number" && product.stock <= 0);
 
   return (
     <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.2 }} className="h-full">

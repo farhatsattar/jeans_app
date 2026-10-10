@@ -19,8 +19,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ImageUploader } from "./image-uploader";
-import { Product, ProductCategory, ProductColor, ProductSize } from "@/types/admin";
+import {
+  KameezSizeSpec,
+  Product,
+  ProductCategory,
+  ProductColor,
+  ProductSize,
+  ShalwarSizeSpec,
+} from "@/types/admin";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DEFAULT_KAMEEZ_CHART,
+  DEFAULT_SHALWAR_CHART,
+} from "@/lib/size-chart";
 
 const productSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -63,6 +74,7 @@ const productSchema = z.object({
   tags: z.string(),
   isFeatured: z.boolean(),
   isActive: z.boolean(),
+  isSoldOut: z.boolean(),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
@@ -75,6 +87,24 @@ interface ProductFormProps {
 }
 
 const ALL_SIZES: ProductSize[] = ["S", "M", "L", "XL", "One Size"];
+const CHART_SIZES: Array<"S" | "M" | "L" | "XL"> = ["S", "M", "L", "XL"];
+
+function buildDefaultKameezChart(
+  existing?: KameezSizeSpec[]
+): KameezSizeSpec[] {
+  return CHART_SIZES.map((size) => {
+    const fromExisting = existing?.find((row) => row.size === size);
+    const fromDefault = DEFAULT_KAMEEZ_CHART.find((row) => row.size === size);
+    return {
+      size,
+      chest: fromExisting?.chest ?? fromDefault?.chest ?? 0,
+      length: fromExisting?.length ?? fromDefault?.length ?? 0,
+      hip: fromExisting?.hip ?? fromDefault?.hip ?? 0,
+      flair: fromExisting?.flair ?? fromDefault?.flair ?? 0,
+    };
+  });
+}
+
 const ALL_COLORS: ProductColor[] = [
   "Red",
   "Green",
@@ -101,6 +131,16 @@ export function ProductForm({
   submitting = false,
 }: ProductFormProps) {
   const [images, setImages] = useState<string[]>(initialData?.images || []);
+  const [kameezChart, setKameezChart] = useState<KameezSizeSpec[]>(
+    buildDefaultKameezChart(initialData?.kameezChart)
+  );
+  const [shalwarChart, setShalwarChart] = useState<ShalwarSizeSpec>({
+    length: initialData?.shalwarChart?.length ?? DEFAULT_SHALWAR_CHART.length,
+    stretchBelt:
+      initialData?.shalwarChart?.stretchBelt ??
+      DEFAULT_SHALWAR_CHART.stretchBelt,
+    pancha: initialData?.shalwarChart?.pancha ?? DEFAULT_SHALWAR_CHART.pancha,
+  });
 
   const {
     register,
@@ -123,6 +163,10 @@ export function ProductForm({
       tags: initialData?.tags?.join(", ") || "",
       isFeatured: initialData?.isFeatured || false,
       isActive: initialData?.isActive ?? true,
+      isSoldOut:
+        initialData?.isSoldOut ||
+        (typeof initialData?.stock === "number" && initialData.stock <= 0) ||
+        false,
     },
   });
 
@@ -132,6 +176,7 @@ export function ProductForm({
   const category = formData.category;
   const isFeatured = formData.isFeatured;
   const isActive = formData.isActive;
+  const isSoldOut = formData.isSoldOut;
 
   const toggleSize = (size: ProductSize) => {
     const newSizes = sizes.includes(size)
@@ -153,6 +198,9 @@ export function ProductForm({
       return;
     }
 
+    const isAccessory =
+      data.category === "Jewelry" || data.category === "Handbags / Purse";
+
     const payload: Omit<Product, "id" | "createdAt" | "updatedAt"> = {
       name: data.name,
       description: data.description,
@@ -169,6 +217,13 @@ export function ProductForm({
         .filter(Boolean),
       isFeatured: Boolean(data.isFeatured),
       isActive: data.isActive !== false,
+      isSoldOut: Boolean(data.isSoldOut),
+      ...(isAccessory
+        ? {}
+        : {
+            kameezChart,
+            shalwarChart,
+          }),
     };
 
     if (
@@ -382,6 +437,112 @@ export function ProductForm({
               </div>
             </CardContent>
           </Card>
+
+          {category !== "Jewelry" && category !== "Handbags / Purse" && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Shirt & Trouser Length</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-3">
+                  <Label>Shirt / Kameez (inches)</Label>
+                  <div className="overflow-x-auto">
+                    <table className="w-full min-w-[420px] border-collapse text-sm">
+                      <thead>
+                        <tr className="border-b bg-muted/40 text-left">
+                          <th className="px-2 py-2">Size</th>
+                          <th className="px-2 py-2">Chest</th>
+                          <th className="px-2 py-2">Length</th>
+                          <th className="px-2 py-2">Hip</th>
+                          <th className="px-2 py-2">Flair</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {kameezChart.map((row, index) => (
+                          <tr key={row.size} className="border-b last:border-0">
+                            <td className="px-2 py-2 font-medium">{row.size}</td>
+                            {(
+                              ["chest", "length", "hip", "flair"] as const
+                            ).map((field) => (
+                              <td key={field} className="px-2 py-2">
+                                <Input
+                                  type="number"
+                                  value={String(row[field])}
+                                  onValueChange={(value) => {
+                                    const parsed = Number(value);
+                                    setKameezChart((prev) =>
+                                      prev.map((item, i) =>
+                                        i === index
+                                          ? {
+                                              ...item,
+                                              [field]: Number.isNaN(parsed)
+                                                ? 0
+                                                : parsed,
+                                            }
+                                          : item
+                                      )
+                                    );
+                                  }}
+                                  className="h-8 w-20"
+                                />
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <Label>Trouser / Shalwar</Label>
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <div className="space-y-1.5">
+                      <p className="text-xs text-muted-foreground">Length</p>
+                      <Input
+                        value={shalwarChart.length}
+                        onValueChange={(value) =>
+                          setShalwarChart((prev) => ({
+                            ...prev,
+                            length: value,
+                          }))
+                        }
+                        placeholder="38-39"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <p className="text-xs text-muted-foreground">
+                        Stretch Belt
+                      </p>
+                      <Input
+                        value={shalwarChart.stretchBelt}
+                        onValueChange={(value) =>
+                          setShalwarChart((prev) => ({
+                            ...prev,
+                            stretchBelt: value,
+                          }))
+                        }
+                        placeholder="24-25"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <p className="text-xs text-muted-foreground">Pancha</p>
+                      <Input
+                        value={shalwarChart.pancha}
+                        onValueChange={(value) =>
+                          setShalwarChart((prev) => ({
+                            ...prev,
+                            pancha: value,
+                          }))
+                        }
+                        placeholder="10 inches"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         <div className="space-y-6">
@@ -430,6 +591,23 @@ export function ProductForm({
                   checked={Boolean(isFeatured)}
                   onCheckedChange={(checked) =>
                     setValue("isFeatured", Boolean(checked), {
+                      shouldValidate: true,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label>Sold Out</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Mark product as sold out on the store
+                  </p>
+                </div>
+                <Switch
+                  checked={Boolean(isSoldOut)}
+                  onCheckedChange={(checked) =>
+                    setValue("isSoldOut", Boolean(checked), {
                       shouldValidate: true,
                     })
                   }
