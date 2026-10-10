@@ -35,6 +35,7 @@ export interface Product {
   colors: ProductColor[];
   rating: number;
   reviews: number;
+  stock?: number;
   isFeatured?: boolean;
   isNew?: boolean;
 }

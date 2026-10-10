@@ -18,10 +18,11 @@ function toStoreProduct(product: AdminProduct): StoreProduct {
     price: product.discountPrice ?? product.price,
     description: product.description,
     images: validImages.length > 0 ? validImages : ["/images/image.jpg"],
-    sizes: product.sizes,
+    sizes: product.sizes?.length ? product.sizes : ["One Size"],
     colors: product.colors,
     rating: 4.5,
     reviews: 0,
+    stock: typeof product.stock === "number" ? product.stock : undefined,
     isFeatured: Boolean(product.isFeatured),
     isNew,
   };

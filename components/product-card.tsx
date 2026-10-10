@@ -8,6 +8,9 @@ import { Product } from "@/lib/products";
 import { Button } from "@/components/ui/button";
 
 export function ProductCard({ product }: { product: Product }) {
+  const isSoldOut =
+    typeof product.stock === "number" ? product.stock <= 0 : false;
+
   return (
     <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.2 }} className="h-full">
       <div className="group flex h-full flex-col rounded-xl border bg-white shadow-sm transition-all duration-300 hover:shadow-lg dark:bg-card">
@@ -17,9 +20,23 @@ export function ProductCard({ product }: { product: Product }) {
               src={product.images[0] || "/images/image.jpg"}
               alt={product.name}
               fill
-              className="object-contain object-center transition-transform duration-300 group-hover:scale-[1.02]"
+              className={`object-contain object-center transition-transform duration-300 group-hover:scale-[1.02] ${
+                isSoldOut ? "opacity-60" : ""
+              }`}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
+
+            {product.isNew && !isSoldOut && (
+              <span className="absolute left-2 top-2 z-10 rounded-sm bg-[#800020] px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+                New
+              </span>
+            )}
+
+            {isSoldOut && (
+              <span className="absolute right-2 top-2 z-10 rounded-sm bg-black/80 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+                Sold Out
+              </span>
+            )}
           </div>
         </Link>
 
@@ -36,16 +53,22 @@ export function ProductCard({ product }: { product: Product }) {
             <p className="shrink-0 font-semibold text-foreground">
               Rs.{product.price.toLocaleString()}
             </p>
-            <Button
-              size="sm"
-              asChild
-              className="rounded-full bg-black text-white hover:bg-black/90"
-            >
-              <Link href={`/products/${product.id}`}>
-                <ShoppingCart className="mr-1.5 size-4" />
-                Add
-              </Link>
-            </Button>
+            {isSoldOut ? (
+              <span className="rounded-full bg-muted px-3 py-1.5 text-xs font-semibold uppercase text-muted-foreground">
+                Sold Out
+              </span>
+            ) : (
+              <Button
+                size="sm"
+                asChild
+                className="rounded-full bg-black text-white hover:bg-black/90"
+              >
+                <Link href={`/products/${product.id}`}>
+                  <ShoppingCart className="mr-1.5 size-4" />
+                  Add
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
       </div>

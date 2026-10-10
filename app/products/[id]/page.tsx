@@ -13,8 +13,6 @@ import { ProductCard } from "@/components/product-card";
 import { ProductReviews } from "@/components/product-reviews";
 import { useShopStore } from "@/store/use-shop-store";
 
-const APPAREL_SIZES: ProductSize[] = ["S", "M", "L", "XL"];
-
 export default function ProductDetailPage() {
   const params = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
@@ -22,7 +20,7 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const addToCart = useShopStore((state) => state.addToCart);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [size, setSize] = useState<ProductSize>("M");
+  const [size, setSize] = useState<ProductSize>("One Size");
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
@@ -37,10 +35,7 @@ export default function ProductDetailPage() {
       ]);
 
       setProduct(data);
-      const defaultSize =
-        data?.sizes.includes("M")
-          ? "M"
-          : data?.sizes[0] ?? "M";
+      const defaultSize = data?.sizes[0] ?? "One Size";
       setSize(defaultSize);
 
       if (data) {
@@ -68,20 +63,21 @@ export default function ProductDetailPage() {
     return Array.from(new Set(product.images.filter(Boolean)));
   }, [product]);
 
+  // Sizes come from admin product settings
   const availableSizes = useMemo(() => {
-    if (!product) return APPAREL_SIZES;
-
-    const isAccessory =
-      product.category === "Jewelry" ||
-      product.category === "Handbags / Purse";
-
-    if (isAccessory) {
-      return product.sizes.length > 0 ? product.sizes : (["One Size"] as ProductSize[]);
-    }
-
-    // Always show S, M, L, XL boxes for clothing products
-    return APPAREL_SIZES;
+    if (!product) return ["One Size"] as ProductSize[];
+    return product.sizes.length > 0
+      ? product.sizes
+      : (["One Size"] as ProductSize[]);
   }, [product]);
+
+  const isSoldOut =
+    typeof product?.stock === "number" ? product.stock <= 0 : false;
+
+  const maxQuantity =
+    typeof product?.stock === "number" && product.stock > 0
+      ? product.stock
+      : 99;
 
   if (loading) {
     return (
@@ -106,6 +102,8 @@ export default function ProductDetailPage() {
   };
 
   const handleAddToCart = () => {
+    if (isSoldOut) return;
+
     addToCart(
       {
         productId: product.id,
@@ -113,7 +111,7 @@ export default function ProductDetailPage() {
         price: product.price,
         image: product.images[0],
         size,
-        quantity,
+        quantity: Math.min(quantity, maxQuantity),
       },
       { openDrawer: true }
     );
@@ -131,9 +129,21 @@ export default function ProductDetailPage() {
                 alt={product.name}
                 fill
                 priority
-                className="object-contain p-2"
+                className={`object-contain p-2 ${isSoldOut ? "opacity-60" : ""}`}
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
+
+              {product.isNew && !isSoldOut && (
+                <span className="absolute left-3 top-3 z-10 rounded-sm bg-[#800020] px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-white">
+                  New
+                </span>
+              )}
+
+              {isSoldOut && (
+                <span className="absolute right-3 top-3 z-10 rounded-sm bg-black/85 px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-white">
+                  Sold Out
+                </span>
+              )}
 
               {galleryImages.length > 1 && (
                 <>
@@ -196,13 +206,19 @@ export default function ProductDetailPage() {
               {product.name}
             </h1>
 
-            <div className="mt-4 flex items-baseline gap-3">
+            <div className="mt-4 flex flex-wrap items-baseline gap-3">
               <p className="text-2xl font-semibold">
                 Rs.{product.price.toLocaleString()} PKR
               </p>
-              <span className="text-sm font-medium text-emerald-700 dark:text-emerald-400">
-                Free shipping
-              </span>
+              {isSoldOut ? (
+                <span className="text-sm font-semibold uppercase text-red-600">
+                  Sold Out
+                </span>
+              ) : (
+                <span className="text-sm font-medium text-emerald-700 dark:text-emerald-400">
+                  Free shipping
+                </span>
+              )}
             </div>
 
             <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
@@ -231,35 +247,40 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            <div className="mt-6 space-y-3">
-              <p className="text-sm font-medium">Quantity</p>
-              <div className="inline-flex items-center border">
-                <button
-                  type="button"
-                  aria-label="Decrease quantity"
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  className="px-3 py-2.5 hover:bg-muted"
-                >
-                  <Minus className="size-4" />
-                </button>
-                <span className="min-w-10 text-center text-sm">{quantity}</span>
-                <button
-                  type="button"
-                  aria-label="Increase quantity"
-                  onClick={() => setQuantity((q) => q + 1)}
-                  className="px-3 py-2.5 hover:bg-muted"
-                >
-                  <Plus className="size-4" />
-                </button>
+            {!isSoldOut && (
+              <div className="mt-6 space-y-3">
+                <p className="text-sm font-medium">Quantity</p>
+                <div className="inline-flex items-center border">
+                  <button
+                    type="button"
+                    aria-label="Decrease quantity"
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    className="px-3 py-2.5 hover:bg-muted"
+                  >
+                    <Minus className="size-4" />
+                  </button>
+                  <span className="min-w-10 text-center text-sm">{quantity}</span>
+                  <button
+                    type="button"
+                    aria-label="Increase quantity"
+                    onClick={() =>
+                      setQuantity((q) => Math.min(maxQuantity, q + 1))
+                    }
+                    className="px-3 py-2.5 hover:bg-muted"
+                  >
+                    <Plus className="size-4" />
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             <Button
               size="lg"
-              className="mt-8 w-full rounded-none bg-black py-6 text-white hover:bg-black/90"
+              className="mt-8 w-full rounded-none bg-black py-6 text-white hover:bg-black/90 disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground"
               onClick={handleAddToCart}
+              disabled={isSoldOut}
             >
-              Add to cart
+              {isSoldOut ? "Sold Out" : "Add to cart"}
             </Button>
 
             {product.category !== "Jewelry" &&
