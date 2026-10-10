@@ -369,6 +369,25 @@ export function ProductForm({
                   )}
                 </div>
               </div>
+
+              <div className="flex items-center justify-between rounded-lg border border-border bg-muted/30 px-4 py-3">
+                <div>
+                  <Label htmlFor="isSoldOut">Sold Out</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Show Sold Out badge and disable Add to cart
+                  </p>
+                </div>
+                <Switch
+                  id="isSoldOut"
+                  checked={Boolean(isSoldOut)}
+                  onCheckedChange={(checked) =>
+                    setValue("isSoldOut", Boolean(checked), {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    })
+                  }
+                />
+              </div>
             </CardContent>
           </Card>
 
@@ -597,7 +616,7 @@ export function ProductForm({
                 />
               </div>
 
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between rounded-lg border border-red-200 bg-red-50/50 px-3 py-2.5 dark:border-red-900/50 dark:bg-red-950/20">
                 <div>
                   <Label>Sold Out</Label>
                   <p className="text-xs text-muted-foreground">
@@ -609,6 +628,7 @@ export function ProductForm({
                   onCheckedChange={(checked) =>
                     setValue("isSoldOut", Boolean(checked), {
                       shouldValidate: true,
+                      shouldDirty: true,
                     })
                   }
                 />

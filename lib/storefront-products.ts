@@ -5,11 +5,11 @@ import { Product as StoreProduct, products as fallbackProducts } from "@/lib/pro
 function toStoreProduct(product: AdminProduct): StoreProduct {
   const createdAt = new Date(product.createdAt);
   const createdTime = createdAt.getTime();
-  // NEW badge only for products added in the last 15 days
+  // NEW badge only for products added in the last 2 days
   const isNew =
     Number.isFinite(createdTime) &&
     createdTime <= Date.now() &&
-    Date.now() - createdTime < 1000 * 60 * 60 * 24 * 15;
+    Date.now() - createdTime < 1000 * 60 * 60 * 24 * 2;
 
   const validImages = product.images.filter(
     (image): image is string => Boolean(image?.trim())

@@ -81,6 +81,21 @@ export default function ProductsPage() {
     }
   };
 
+  const handleToggleSoldOut = async (product: Product) => {
+    const next = !Boolean(product.isSoldOut);
+    try {
+      await updateProduct(product.id, { isSoldOut: next });
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id === product.id ? { ...p, isSoldOut: next } : p
+        )
+      );
+      toast.success(next ? "Marked as Sold Out" : "Sold Out removed");
+    } catch {
+      toast.error("Failed to update sold out status");
+    }
+  };
+
   const columns = [
     {
       key: "image",
@@ -134,10 +149,10 @@ export default function ProductsPage() {
       render: (product: Product) => (
         <span
           className={
-            product.stock < 5 ? "text-red-600" : ""
+            product.stock < 5 || product.isSoldOut ? "text-red-600" : ""
           }
         >
-          {product.stock}
+          {product.isSoldOut ? "Sold Out" : product.stock}
         </span>
       ),
     },
@@ -151,8 +166,20 @@ export default function ProductsPage() {
         ) : null,
     },
     {
+      key: "soldOut",
+      header: "Sold Out",
+      className: "w-28",
+      render: (product: Product) => (
+        <Switch
+          checked={Boolean(product.isSoldOut)}
+          onCheckedChange={() => handleToggleSoldOut(product)}
+          aria-label={`Toggle sold out for ${product.name}`}
+        />
+      ),
+    },
+    {
       key: "status",
-      header: "Status",
+      header: "Active",
       className: "w-24",
       render: (product: Product) => (
         <Switch
