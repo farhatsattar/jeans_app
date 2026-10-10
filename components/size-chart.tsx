@@ -3,14 +3,20 @@
 import {
   DEFAULT_KAMEEZ_CHART,
   DEFAULT_SHALWAR_CHART,
-  type ChartSize,
-  type KameezSizeSpec,
   type ShalwarSizeSpec,
 } from "@/lib/size-chart";
 
+interface SizeChartRow {
+  size: string;
+  chest: number;
+  length: number;
+  hip: number;
+  flair: number;
+}
+
 interface SizeChartProps {
-  selectedSize?: ChartSize | string;
-  kameezChart?: KameezSizeSpec[];
+  selectedSize?: string;
+  kameezChart?: SizeChartRow[];
   shalwarChart?: ShalwarSizeSpec;
   note?: string;
 }
