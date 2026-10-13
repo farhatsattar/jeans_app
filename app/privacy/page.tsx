@@ -221,7 +221,7 @@ export default function PrivacyPolicyPage() {
                 <p className="mt-2">
                   WhatsApp:{" "}
                   <a
-                    href="https://wa.me/923014440787"
+                    href="https://api.whatsapp.com/send?phone=923014440787"
                     className="underline underline-offset-4"
                   >
                     +92 301 4440787
@@ -260,7 +260,7 @@ export default function PrivacyPolicyPage() {
                 If you require more information, please message us on WhatsApp
                 at{" "}
                 <a
-                  href="https://wa.me/923014440787"
+                  href="https://api.whatsapp.com/send?phone=923014440787"
                   className="underline underline-offset-4 text-foreground"
                 >
                   +92 301 4440787

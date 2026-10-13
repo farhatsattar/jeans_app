@@ -1,8 +1,20 @@
 "use client";
 
-const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "923014440787";
 const defaultMessage =
   "Hi, I would like to know more about Haa-Meem Pakistani clothes.";
+
+/** Digits only — country code, no + or spaces */
+function getWhatsAppNumber() {
+  const raw = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "923014440787";
+  return raw.replace(/\D/g, "");
+}
+
+function isMobileDevice() {
+  if (typeof navigator === "undefined") return false;
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
+}
 
 function PakistanFlag({ className }: { className?: string }) {
   return (
@@ -25,12 +37,50 @@ function PakistanFlag({ className }: { className?: string }) {
 }
 
 export function WhatsAppChatButton() {
-  const href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(defaultMessage)}`;
+  const phone = getWhatsAppNumber();
+  const text = encodeURIComponent(defaultMessage);
+  const webHref = `https://wa.me/${phone}?text=${text}`;
+
+  const openWhatsApp = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+
+    if (isMobileDevice()) {
+      let appOpened = false;
+
+      const markOpened = () => {
+        appOpened = true;
+        window.removeEventListener("blur", markOpened);
+        document.removeEventListener("visibilitychange", onVisibility);
+      };
+
+      const onVisibility = () => {
+        if (document.hidden) markOpened();
+      };
+
+      window.addEventListener("blur", markOpened);
+      document.addEventListener("visibilitychange", onVisibility);
+
+      // Open WhatsApp app directly
+      window.location.href = `whatsapp://send?phone=${phone}&text=${text}`;
+
+      // Fallback only if app did not open
+      window.setTimeout(() => {
+        window.removeEventListener("blur", markOpened);
+        document.removeEventListener("visibilitychange", onVisibility);
+        if (!appOpened && !document.hidden) {
+          window.location.href = webHref;
+        }
+      }, 1500);
+      return;
+    }
+
+    window.open(webHref, "_blank", "noopener,noreferrer");
+  };
 
   return (
     <a
-      href={href}
-      target="_blank"
+      href={webHref}
+      onClick={openWhatsApp}
       rel="noopener noreferrer"
       aria-label="Chat on WhatsApp"
       className="fixed bottom-5 right-5 z-[60] inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-lg transition hover:scale-105 hover:bg-gray-50"
