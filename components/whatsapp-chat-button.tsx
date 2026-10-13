@@ -1,20 +1,11 @@
 "use client";
 
-const defaultMessage =
+import { useCallback } from "react";
+
+/** Hardcoded digits only — do not use + or spaces (mobile WhatsApp rejects them). */
+const WHATSAPP_PHONE = "923014440787";
+const DEFAULT_MESSAGE =
   "Hi, I would like to know more about Haa-Meem Pakistani clothes.";
-
-/** Digits only — country code, no + or spaces */
-function getWhatsAppNumber() {
-  const raw = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "923014440787";
-  return raw.replace(/\D/g, "");
-}
-
-function isMobileDevice() {
-  if (typeof navigator === "undefined") return false;
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    navigator.userAgent
-  );
-}
 
 function PakistanFlag({ className }: { className?: string }) {
   return (
@@ -36,54 +27,56 @@ function PakistanFlag({ className }: { className?: string }) {
   );
 }
 
+function getLinks() {
+  const text = encodeURIComponent(DEFAULT_MESSAGE);
+  const waMe = `https://wa.me/${WHATSAPP_PHONE}?text=${text}`;
+  const api = `https://api.whatsapp.com/send?phone=${WHATSAPP_PHONE}&text=${text}`;
+  // Android: open WhatsApp app directly
+  const androidIntent =
+    `intent://send/?phone=${WHATSAPP_PHONE}&text=${text}` +
+    `#Intent;scheme=whatsapp;package=com.whatsapp;` +
+    `S.browser_fallback_url=${encodeURIComponent(waMe)};end`;
+
+  return { waMe, api, androidIntent };
+}
+
 export function WhatsAppChatButton() {
-  const phone = getWhatsAppNumber();
-  const text = encodeURIComponent(defaultMessage);
-  const webHref = `https://wa.me/${phone}?text=${text}`;
+  const { waMe, api, androidIntent } = getLinks();
 
-  const openWhatsApp = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
+  const handleClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>) => {
+      const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
+      const isAndroid = /Android/i.test(ua);
+      const isIOS = /iPhone|iPad|iPod/i.test(ua);
 
-    if (isMobileDevice()) {
-      let appOpened = false;
+      // Mobile: force full navigation (in-app browsers / SPA can break target=_blank)
+      if (isAndroid) {
+        e.preventDefault();
+        window.location.href = androidIntent;
+        return;
+      }
 
-      const markOpened = () => {
-        appOpened = true;
-        window.removeEventListener("blur", markOpened);
-        document.removeEventListener("visibilitychange", onVisibility);
-      };
+      if (isIOS) {
+        e.preventDefault();
+        // api.whatsapp.com is more reliable on iPhone Safari / Instagram browser
+        window.location.href = api;
+        return;
+      }
 
-      const onVisibility = () => {
-        if (document.hidden) markOpened();
-      };
-
-      window.addEventListener("blur", markOpened);
-      document.addEventListener("visibilitychange", onVisibility);
-
-      // Open WhatsApp app directly
-      window.location.href = `whatsapp://send?phone=${phone}&text=${text}`;
-
-      // Fallback only if app did not open
-      window.setTimeout(() => {
-        window.removeEventListener("blur", markOpened);
-        document.removeEventListener("visibilitychange", onVisibility);
-        if (!appOpened && !document.hidden) {
-          window.location.href = webHref;
-        }
-      }, 1500);
-      return;
-    }
-
-    window.open(webHref, "_blank", "noopener,noreferrer");
-  };
+      // Desktop: new tab WhatsApp Web
+      e.preventDefault();
+      window.open(waMe, "_blank", "noopener,noreferrer");
+    },
+    [androidIntent, api, waMe]
+  );
 
   return (
     <a
-      href={webHref}
-      onClick={openWhatsApp}
+      href={waMe}
+      onClick={handleClick}
       rel="noopener noreferrer"
       aria-label="Chat on WhatsApp"
-      className="fixed bottom-5 right-5 z-[60] inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-lg transition hover:scale-105 hover:bg-gray-50"
+      className="fixed bottom-5 right-5 z-[60] inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-lg transition hover:scale-105 hover:bg-gray-50 active:scale-95"
     >
       <PakistanFlag className="h-4 w-6 overflow-hidden rounded-[2px] shadow-sm ring-1 ring-black/10" />
       <span>Chat</span>
