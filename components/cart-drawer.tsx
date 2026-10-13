@@ -34,9 +34,9 @@ export function CartDrawer() {
     <Sheet open={isCartOpen} onOpenChange={setCartOpen}>
       <SheetContent
         side="right"
-        className="flex w-full max-w-md flex-col gap-0 p-0 sm:max-w-md"
+        className="flex h-dvh max-h-dvh w-full max-w-full flex-col gap-0 overflow-hidden p-0 sm:max-w-md"
       >
-        <SheetHeader className="border-b px-4 py-4">
+        <SheetHeader className="shrink-0 border-b px-4 py-4 pr-12">
           <SheetTitle className="text-lg font-semibold tracking-wide">
             Your cart
           </SheetTitle>
@@ -48,7 +48,7 @@ export function CartDrawer() {
         </SheetHeader>
 
         {cart.length === 0 ? (
-          <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
+          <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-4 px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-center">
             <p className="text-sm text-muted-foreground">
               Continue shopping to add premium Pakistani clothes.
             </p>
@@ -62,7 +62,7 @@ export function CartDrawer() {
           </div>
         ) : (
           <>
-            <div className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-4 py-4">
               {cart.map((item) => (
                 <div
                   key={`${item.productId}-${item.size}`}
@@ -94,7 +94,7 @@ export function CartDrawer() {
                       Size: {item.size}
                     </p>
                     <p className="mt-1 text-sm font-semibold">
-                      Rs.{item.price.toLocaleString()} PKR
+                      Rs.{item.price.toLocaleString()}
                     </p>
 
                     <div className="mt-2 flex items-center justify-between gap-2">
@@ -148,11 +148,13 @@ export function CartDrawer() {
               ))}
             </div>
 
-            <SheetFooter className="border-t bg-background px-4 py-4">
-              <div className="mb-1 flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Estimated total</span>
-                <span className="text-lg font-semibold">
-                  Rs.{total.toLocaleString()} PKR
+            <SheetFooter className="mt-0 shrink-0 border-t bg-background px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+              <div className="mb-1 flex items-start justify-between gap-3 text-sm">
+                <span className="shrink-0 text-muted-foreground">
+                  Estimated total
+                </span>
+                <span className="text-right text-base font-semibold leading-tight sm:text-lg">
+                  Rs.{total.toLocaleString()}
                 </span>
               </div>
               <p className="mb-3 text-xs text-muted-foreground">
@@ -179,7 +181,7 @@ export function CartDrawer() {
               <button
                 type="button"
                 onClick={closeCart}
-                className="mt-1 text-center text-sm underline underline-offset-4"
+                className="mt-1 pb-1 text-center text-sm underline underline-offset-4"
               >
                 Continue shopping
               </button>

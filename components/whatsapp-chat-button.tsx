@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
+import { useShopStore } from "@/store/use-shop-store";
 
 /** Hardcoded digits only — do not use + or spaces (mobile WhatsApp rejects them). */
 const WHATSAPP_PHONE = "923014440787";
@@ -42,6 +43,7 @@ function getLinks() {
 
 export function WhatsAppChatButton() {
   const { waMe, api, androidIntent } = getLinks();
+  const isCartOpen = useShopStore((state) => state.isCartOpen);
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -69,6 +71,8 @@ export function WhatsAppChatButton() {
     },
     [androidIntent, api, waMe]
   );
+
+  if (isCartOpen) return null;
 
   return (
     <a
