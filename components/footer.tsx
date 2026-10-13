@@ -119,11 +119,12 @@ export function Footer() {
     Company: [
       { label: "About Us", href: "/about" },
       { label: "Contact", href: "/about" },
+      { label: "Privacy Policy", href: "/privacy" },
       { label: "Shop", href: "/products" },
     ],
     Support: [
       { label: "Shipping Info", href: "/products" },
-      { label: "Returns", href: "/about" },
+      { label: "Return & Exchange", href: "/returns" },
       { label: "Size Guide", href: "/products" },
       { label: "FAQ", href: "/about" },
     ],
@@ -290,8 +291,20 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 border-t border-gray-800 pt-8 text-center text-sm text-gray-500">
-          © {new Date().getFullYear()} Haa-Meem | All Rights Reserved
+        <div className="mt-12 flex flex-col items-center gap-2 border-t border-gray-800 pt-8 text-center text-sm text-gray-500 sm:flex-row sm:justify-center sm:gap-4">
+          <span>© {new Date().getFullYear()} Haa-Meem | All Rights Reserved</span>
+          <Link
+            href="/privacy"
+            className="text-gray-400 transition-colors hover:text-white"
+          >
+            Privacy Policy
+          </Link>
+          <Link
+            href="/returns"
+            className="text-gray-400 transition-colors hover:text-white"
+          >
+            Return & Exchange
+          </Link>
         </div>
       </div>
     </footer>
