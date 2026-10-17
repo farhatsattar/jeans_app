@@ -31,7 +31,7 @@ const navLinks = [
 
 const socialLinks = [
   {
-    href: "https://www.facebook.com/profile.php?id=100063791665269",
+    href: "https://www.facebook.com/profile.php?id=61595562836714",
     label: "Facebook",
     className: "text-blue-500 hover:text-white",
     icon: (
