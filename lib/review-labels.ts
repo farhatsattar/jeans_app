@@ -20,6 +20,9 @@ export function getReviewCategoryLabel(
   if (lower.includes("fancy")) {
     return "Fancy Wear";
   }
+  if (lower.includes("unstitched")) {
+    return "Unstitched";
+  }
   if (lower.includes("jewel")) {
     return "Jewelry";
   }

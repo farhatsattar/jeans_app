@@ -2,6 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { PRODUCT_CATEGORIES } from "@/lib/product-categories";
 
 interface FiltersProps {
   query: string;
@@ -23,12 +24,11 @@ export function ProductsFilter({ query, category, color, maxPrice, sort, onChang
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All Categories</SelectItem>
-          <SelectItem value="Winter Collection">Winter Collection</SelectItem>
-          <SelectItem value="Cotton Elegant Embroidery Suit">Cotton Elegant Embroidery Suit</SelectItem>
-          <SelectItem value="Jeans / Trousers">Jeans / Trousers</SelectItem>
-          <SelectItem value="Fancy Wear">Fancy Wear</SelectItem>
-          <SelectItem value="Jewelry">Jewelry</SelectItem>
-          <SelectItem value="Handbags / Purse">Handbags / Purse</SelectItem>
+          {PRODUCT_CATEGORIES.map((item) => (
+            <SelectItem key={item} value={item}>
+              {item}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
       <Select value={color} onValueChange={(value) => onChange("color", value ?? "all")}>

@@ -7,6 +7,7 @@ import { notFound, useParams } from "next/navigation";
 import { ChevronLeft, ChevronRight, Loader2, Minus, Plus } from "lucide-react";
 import { Product, ProductSize } from "@/lib/products";
 import { fetchStoreProduct, fetchStoreProducts } from "@/lib/storefront-products";
+import { isNoSizeCategory } from "@/lib/product-categories";
 import { Button } from "@/components/ui/button";
 import { SizeChart } from "@/components/size-chart";
 import { ProductCard } from "@/components/product-card";
@@ -90,6 +91,8 @@ export default function ProductDetailPage() {
 
   if (!product) return notFound();
 
+  const hideSizes = isNoSizeCategory(product.category);
+
   const prevImage = () => {
     setSelectedImage((current) =>
       current === 0 ? galleryImages.length - 1 : current - 1
@@ -111,7 +114,7 @@ export default function ProductDetailPage() {
         name: product.name,
         price: product.price,
         image: product.images[0],
-        size,
+        size: isNoSizeCategory(product.category) ? "One Size" : size,
         quantity: Math.min(quantity, maxQuantity),
       },
       { openDrawer: true }
@@ -226,27 +229,36 @@ export default function ProductDetailPage() {
               {product.description}
             </p>
 
-            <div className="mt-8 space-y-3">
-              <p className="text-sm font-medium">
-                Size: <span className="font-normal text-muted-foreground">{size}</span>
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {availableSizes.map((itemSize) => (
-                  <button
-                    key={itemSize}
-                    type="button"
-                    onClick={() => setSize(itemSize)}
-                    className={`min-w-14 border px-4 py-2.5 text-sm font-medium transition ${
-                      size === itemSize
-                        ? "border-black bg-black text-white"
-                        : "border-border bg-background hover:border-black"
-                    }`}
-                  >
-                    {itemSize}
-                  </button>
-                ))}
+            {!hideSizes && (
+              <div className="mt-8 space-y-3">
+                <p className="text-sm font-medium">
+                  Size:{" "}
+                  <span className="font-normal text-muted-foreground">{size}</span>
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {availableSizes.map((itemSize) => (
+                    <button
+                      key={itemSize}
+                      type="button"
+                      onClick={() => setSize(itemSize)}
+                      className={`min-w-14 border px-4 py-2.5 text-sm font-medium transition ${
+                        size === itemSize
+                          ? "border-black bg-black text-white"
+                          : "border-border bg-background hover:border-black"
+                      }`}
+                    >
+                      {itemSize}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+
+            {hideSizes && product.category === "Unstitched" && (
+              <p className="mt-8 text-sm text-muted-foreground">
+                Unstitched fabric — no size selection needed.
+              </p>
+            )}
 
             {!isSoldOut && (
               <div className="mt-6 space-y-3">
@@ -284,16 +296,15 @@ export default function ProductDetailPage() {
               {isSoldOut ? "Sold Out" : "Add to cart"}
             </Button>
 
-            {product.category !== "Jewelry" &&
-              product.category !== "Handbags / Purse" && (
-                <div className="mt-8">
-                  <SizeChart
-                    selectedSize={size}
-                    kameezChart={product.kameezChart}
-                    shalwarChart={product.shalwarChart}
-                  />
-                </div>
-              )}
+            {!hideSizes && (
+              <div className="mt-8">
+                <SizeChart
+                  selectedSize={size}
+                  kameezChart={product.kameezChart}
+                  shalwarChart={product.shalwarChart}
+                />
+              </div>
+            )}
 
             <ProductReviews
               productId={product.id}

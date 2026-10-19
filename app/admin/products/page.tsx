@@ -239,6 +239,7 @@ export default function ProductsPage() {
             <SelectItem value="Cotton Elegant Embroidery Suit">Cotton Elegant Embroidery Suit</SelectItem>
             <SelectItem value="Jeans / Trousers">Jeans / Trousers</SelectItem>
             <SelectItem value="Fancy Wear">Fancy Wear</SelectItem>
+            <SelectItem value="Unstitched">Unstitched</SelectItem>
             <SelectItem value="Jewelry">Jewelry</SelectItem>
             <SelectItem value="Handbags / Purse">Handbags / Purse</SelectItem>
           </SelectContent>

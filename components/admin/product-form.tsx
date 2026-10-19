@@ -32,6 +32,10 @@ import {
   DEFAULT_KAMEEZ_CHART,
   DEFAULT_SHALWAR_CHART,
 } from "@/lib/size-chart";
+import {
+  PRODUCT_CATEGORIES,
+  isNoSizeCategory,
+} from "@/lib/product-categories";
 
 const productSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -41,6 +45,7 @@ const productSchema = z.object({
     "Cotton Elegant Embroidery Suit",
     "Jeans / Trousers",
     "Fancy Wear",
+    "Unstitched",
     "Jewelry",
     "Handbags / Purse",
   ]),
@@ -177,6 +182,15 @@ export function ProductForm({
   const isFeatured = formData.isFeatured;
   const isActive = formData.isActive;
   const isSoldOut = formData.isSoldOut;
+  const noSizeCategory = isNoSizeCategory(category);
+
+  const handleCategoryChange = (value: string) => {
+    const next = value as ProductCategory;
+    setValue("category", next, { shouldValidate: true });
+    if (isNoSizeCategory(next)) {
+      setValue("sizes", ["One Size"], { shouldValidate: true });
+    }
+  };
 
   const toggleSize = (size: ProductSize) => {
     const newSizes = sizes.includes(size)
@@ -198,8 +212,7 @@ export function ProductForm({
       return;
     }
 
-    const isAccessory =
-      data.category === "Jewelry" || data.category === "Handbags / Purse";
+    const noSize = isNoSizeCategory(data.category);
 
     const payload: Omit<Product, "id" | "createdAt" | "updatedAt"> = {
       name: data.name,
@@ -208,7 +221,7 @@ export function ProductForm({
       price: data.price,
       stock: data.stock,
       sku: data.sku,
-      sizes: data.sizes,
+      sizes: noSize ? (["One Size"] as ProductSize[]) : data.sizes,
       colors: data.colors,
       images,
       tags: data.tags
@@ -218,7 +231,7 @@ export function ProductForm({
       isFeatured: Boolean(data.isFeatured),
       isActive: data.isActive !== false,
       isSoldOut: Boolean(data.isSoldOut),
-      ...(isAccessory
+      ...(noSize
         ? {}
         : {
             kameezChart,
@@ -282,20 +295,17 @@ export function ProductForm({
                   <Label htmlFor="category">Category</Label>
                   <Select
                     value={category}
-                    onValueChange={(value) =>
-                      setValue("category", value as ProductCategory, { shouldValidate: true })
-                    }
+                    onValueChange={handleCategoryChange}
                   >
                     <SelectTrigger id="category">
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Winter Collection">Winter Collection</SelectItem>
-                      <SelectItem value="Cotton Elegant Embroidery Suit">Cotton Elegant Embroidery Suit</SelectItem>
-                      <SelectItem value="Jeans / Trousers">Jeans / Trousers</SelectItem>
-                      <SelectItem value="Fancy Wear">Fancy Wear</SelectItem>
-                      <SelectItem value="Jewelry">Jewelry</SelectItem>
-                      <SelectItem value="Handbags / Purse">Handbags / Purse</SelectItem>
+                      {PRODUCT_CATEGORIES.map((item) => (
+                        <SelectItem key={item} value={item}>
+                          {item}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -396,30 +406,38 @@ export function ProductForm({
               <CardTitle>Variations</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <Label>Available Sizes</Label>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {ALL_SIZES.map((size) => (
-                    <button
-                      key={size}
-                      type="button"
-                      onClick={() => toggleSize(size)}
-                      className={`rounded-lg border px-4 py-2 text-sm font-medium transition ${
-                        sizes.includes(size)
-                          ? "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                          : "border-border hover:border-blue-300"
-                      }`}
-                    >
-                      {size}
-                    </button>
-                  ))}
+              {noSizeCategory ? (
+                <div className="rounded-lg border border-dashed bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
+                  {category === "Unstitched"
+                    ? "Unstitched dresses do not need sizes or length charts. Size is saved as One Size automatically."
+                    : `${category} does not need sizes or length charts. Size is saved as One Size automatically.`}
                 </div>
-                {errors.sizes && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.sizes.message}
-                  </p>
-                )}
-              </div>
+              ) : (
+                <div>
+                  <Label>Available Sizes</Label>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {ALL_SIZES.map((size) => (
+                      <button
+                        key={size}
+                        type="button"
+                        onClick={() => toggleSize(size)}
+                        className={`rounded-lg border px-4 py-2 text-sm font-medium transition ${
+                          sizes.includes(size)
+                            ? "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                            : "border-border hover:border-blue-300"
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                  {errors.sizes && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.sizes.message}
+                    </p>
+                  )}
+                </div>
+              )}
 
               <div>
                 <Label>Available Colors</Label>
@@ -457,7 +475,7 @@ export function ProductForm({
             </CardContent>
           </Card>
 
-          {category !== "Jewelry" && category !== "Handbags / Purse" && (
+          {!noSizeCategory && (
             <Card>
               <CardHeader>
                 <CardTitle>Shirt & Trouser Length</CardTitle>

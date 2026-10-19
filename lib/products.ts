@@ -3,6 +3,7 @@ export type ProductCategory =
   | "Cotton Elegant Embroidery Suit"
   | "Jeans / Trousers"
   | "Fancy Wear"
+  | "Unstitched"
   | "Jewelry"
   | "Handbags / Purse";
 export type ProductColor =

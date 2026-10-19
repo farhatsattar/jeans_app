@@ -35,6 +35,12 @@ export const sampleCategories: Omit<Category, "id" | "createdAt">[] = [
     description: "Luxury fancy outfits for weddings and special occasions",
   },
   {
+    name: "Unstitched",
+    slug: "unstitched",
+    image: "/images/images3.jfif",
+    description: "Unstitched dress fabrics — no size selection required",
+  },
+  {
     name: "Jewelry",
     slug: "jewelry",
     image: "/images/jewelry-pearl-set.jpg",

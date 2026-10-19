@@ -113,6 +113,7 @@ export function Footer() {
       { label: "Cotton Elegant Embroidery Suit", href: "/products?category=Cotton Elegant Embroidery Suit" },
       { label: "Jeans / Trousers", href: "/products?category=Jeans / Trousers" },
       { label: "Fancy Wear", href: "/products?category=Fancy Wear" },
+      { label: "Unstitched", href: "/products?category=Unstitched" },
       { label: "Jewelry", href: "/products?category=Jewelry" },
       { label: "Handbags / Purse", href: "/products?category=Handbags / Purse" },
     ],
@@ -147,7 +148,7 @@ export function Footer() {
             <p className="mt-4 text-sm leading-6 text-gray-400">
               Premium Pakistani stitched clothes since 2020.
               Shop Winter Collection, Cotton Elegant Embroidery Suit, Jeans / Trousers, Fancy Wear,
-              Jewelry and Handbags with Haa-Meem.
+              Unstitched, Jewelry and Handbags with Haa-Meem.
             </p>
           </div>
 

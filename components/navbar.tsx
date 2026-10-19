@@ -23,6 +23,7 @@ const navLinks = [
   { href: "/products?category=Cotton Elegant Embroidery Suit", label: "Cotton Elegant Embroidery Suit" },
   { href: "/products?category=Jeans / Trousers", label: "Jeans / Trousers" },
   { href: "/products?category=Fancy Wear", label: "Fancy Wear" },
+  { href: "/products?category=Unstitched", label: "Unstitched" },
   { href: "/products?category=Jewelry", label: "Jewelry" },
   { href: "/products?category=Handbags / Purse", label: "Handbags / Purse" },
   { href: "/orders", label: "My Orders" },
