@@ -137,7 +137,7 @@ export function Navbar() {
   const cartCount = getCartCount(cart);
 
   const shippingMessage =
-    "Free shipping Nationwide • Nationwide: Ready-to-Wear and Unstitched Orders: 5 working days";
+    "Delivery charges Rs.200 Nationwide • Ready-to-Wear and Unstitched Orders: 5 working days";
 
   return (
     <>

@@ -29,8 +29,8 @@ export default function CheckoutPage() {
 
   const total = getCartTotal(cart);
   const count = getCartCount(cart);
-  const shipping = 0;
-  const finalTotal = total;
+  const shipping = 200;
+  const finalTotal = total + shipping;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -311,8 +311,8 @@ export default function CheckoutPage() {
             <span>Rs.{total.toLocaleString()}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Shipping</span>
-            <span>Free</span>
+            <span className="text-muted-foreground">Delivery</span>
+            <span>Rs.{shipping.toLocaleString()}</span>
           </div>
           <div className="flex justify-between border-t pt-3 text-lg font-semibold">
             <span>Total</span>

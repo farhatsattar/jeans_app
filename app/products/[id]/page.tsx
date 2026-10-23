@@ -219,8 +219,8 @@ export default function ProductDetailPage() {
                   Sold Out
                 </span>
               ) : (
-                <span className="text-sm font-medium text-emerald-700 dark:text-emerald-400">
-                  Free shipping
+                <span className="text-sm font-medium text-muted-foreground">
+                  Delivery Rs.200
                 </span>
               )}
             </div>

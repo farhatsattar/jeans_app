@@ -16,6 +16,8 @@ export default function CartPage() {
   const updateQuantity = useShopStore((state) => state.updateQuantity);
   const total = getCartTotal(cart);
   const count = getCartCount(cart);
+  const shipping = 200;
+  const finalTotal = total + shipping;
 
   if (cart.length === 0) {
     return (
@@ -115,12 +117,12 @@ export default function CartPage() {
             <span>Rs.{total.toLocaleString()}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Shipping</span>
-            <span>Free</span>
+            <span className="text-muted-foreground">Delivery</span>
+            <span>Rs.{shipping.toLocaleString()}</span>
           </div>
           <div className="flex items-center justify-between border-t pt-3 text-lg font-semibold">
             <span>Total</span>
-            <span>Rs.{total.toLocaleString()} PKR</span>
+            <span>Rs.{finalTotal.toLocaleString()} PKR</span>
           </div>
         </div>
 
