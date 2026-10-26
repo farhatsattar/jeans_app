@@ -143,7 +143,7 @@ export function Navbar() {
   return (
     <>
       {/* Top Announcement Bar */}
-      <div className="sticky top-0 z-40 overflow-hidden bg-black py-2 text-xs tracking-wide text-white md:text-sm">
+      <div className="sticky top-0 z-40 overflow-hidden bg-[#800020] py-2 text-xs tracking-wide text-white md:text-sm">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex w-max items-center gap-8 whitespace-nowrap animate-marquee">
             {/* Unit 1 */}

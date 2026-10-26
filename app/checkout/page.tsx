@@ -313,7 +313,9 @@ export default function CheckoutPage() {
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Delivery</span>
-            <span>Rs.{shipping.toLocaleString()}</span>
+            <span className="font-semibold text-[#800020]">
+              Rs.{shipping.toLocaleString()}
+            </span>
           </div>
           <div className="flex justify-between border-t pt-3 text-lg font-semibold">
             <span>Total</span>

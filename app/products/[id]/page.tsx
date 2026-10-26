@@ -221,7 +221,7 @@ export default function ProductDetailPage() {
                   Sold Out
                 </span>
               ) : (
-                <span className="text-sm font-medium text-muted-foreground">
+                <span className="text-sm font-semibold text-[#800020]">
                   {deliveryLabelForCategory(product.category)}
                 </span>
               )}

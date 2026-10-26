@@ -159,7 +159,7 @@ export function CartDrawer() {
                   Rs.{total.toLocaleString()}
                 </span>
               </div>
-              <p className="mb-3 text-xs text-muted-foreground">
+              <p className="mb-3 text-xs font-semibold text-[#800020]">
                 Delivery Rs.{delivery} added at checkout.
               </p>
 
