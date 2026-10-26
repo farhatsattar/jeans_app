@@ -11,7 +11,9 @@ const categories = [
   { name: "Cotton Elegant Embroidery Suit", image: "/images/kurta.jfif" },
   { name: "Jeans / Trousers", image: "/images/tr1.jfif" },
   { name: "Fancy Wear", image: "/images/images%20(2).jfif" },
+  { name: "Unstitched", image: "/images/images3.jfif" },
   { name: "Jewelry", image: "/images/jewelry-pearl-set.jpg" },
+  { name: "Coratia", image: "/images/jewelry-pearl-set.jpg" },
   { name: "Handbags / Purse", image: "/images/handbag-black.jpg" },
 ];
 

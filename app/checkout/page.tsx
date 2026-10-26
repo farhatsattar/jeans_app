@@ -29,7 +29,7 @@ export default function CheckoutPage() {
 
   const total = getCartTotal(cart);
   const count = getCartCount(cart);
-  const shipping = 200;
+  const shipping = 300;
   const finalTotal = total + shipping;
 
   const [isSubmitting, setIsSubmitting] = useState(false);

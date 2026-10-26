@@ -16,7 +16,7 @@ export default function CartPage() {
   const updateQuantity = useShopStore((state) => state.updateQuantity);
   const total = getCartTotal(cart);
   const count = getCartCount(cart);
-  const shipping = 200;
+  const shipping = 300;
   const finalTotal = total + shipping;
 
   if (cart.length === 0) {

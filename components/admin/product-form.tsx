@@ -47,6 +47,7 @@ const productSchema = z.object({
     "Fancy Wear",
     "Unstitched",
     "Jewelry",
+    "Coratia",
     "Handbags / Purse",
   ]),
   price: z.number().min(0, "Price must be positive"),

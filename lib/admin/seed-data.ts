@@ -47,6 +47,12 @@ export const sampleCategories: Omit<Category, "id" | "createdAt">[] = [
     description: "Elegant jewelry sets for parties, bridal and festive looks",
   },
   {
+    name: "Coratia",
+    slug: "coratia",
+    image: "/images/jewelry-pearl-set.jpg",
+    description: "Coratia collection — accessories without size selection",
+  },
+  {
     name: "Handbags / Purse",
     slug: "handbags-purse",
     image: "/images/handbag-black.jpg",
@@ -395,7 +401,7 @@ export const defaultSettings: StoreSettings = {
   },
   currency: "PKR",
   currencySymbol: "Rs.",
-  shippingCharges: 200,
+  shippingCharges: 300,
   freeShippingThreshold: 5000,
 };
 

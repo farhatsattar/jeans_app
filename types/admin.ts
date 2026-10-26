@@ -6,6 +6,7 @@ export type ProductCategory =
   | "Fancy Wear"
   | "Unstitched"
   | "Jewelry"
+  | "Coratia"
   | "Handbags / Purse";
 export type ProductColor =
   | "Red"

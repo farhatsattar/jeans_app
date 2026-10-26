@@ -158,7 +158,7 @@ export function CartDrawer() {
                 </span>
               </div>
               <p className="mb-3 text-xs text-muted-foreground">
-                Delivery Rs.200 added at checkout.
+                Delivery Rs.300 added at checkout.
               </p>
 
               <Button

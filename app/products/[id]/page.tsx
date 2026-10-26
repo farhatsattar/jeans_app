@@ -220,7 +220,7 @@ export default function ProductDetailPage() {
                 </span>
               ) : (
                 <span className="text-sm font-medium text-muted-foreground">
-                  Delivery Rs.200
+                  Delivery Rs.300
                 </span>
               )}
             </div>

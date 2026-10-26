@@ -18,7 +18,7 @@ const DEFAULT_SETTINGS: StoreSettings = {
   },
   currency: "PKR",
   currencySymbol: "Rs.",
-  shippingCharges: 0,
+  shippingCharges: 300,
   freeShippingThreshold: 0,
 };
 

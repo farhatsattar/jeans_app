@@ -241,6 +241,7 @@ export default function ProductsPage() {
             <SelectItem value="Fancy Wear">Fancy Wear</SelectItem>
             <SelectItem value="Unstitched">Unstitched</SelectItem>
             <SelectItem value="Jewelry">Jewelry</SelectItem>
+            <SelectItem value="Coratia">Coratia</SelectItem>
             <SelectItem value="Handbags / Purse">Handbags / Purse</SelectItem>
           </SelectContent>
         </Select>

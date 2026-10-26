@@ -8,6 +8,7 @@ export const PRODUCT_CATEGORIES = [
   "Fancy Wear",
   "Unstitched",
   "Jewelry",
+  "Coratia",
   "Handbags / Purse",
 ] as const satisfies readonly ProductCategory[];
 
@@ -16,6 +17,7 @@ export function isNoSizeCategory(category: string): boolean {
   return (
     category === "Unstitched" ||
     category === "Jewelry" ||
+    category === "Coratia" ||
     category === "Handbags / Purse"
   );
 }

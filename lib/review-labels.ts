@@ -26,6 +26,9 @@ export function getReviewCategoryLabel(
   if (lower.includes("jewel")) {
     return "Jewelry";
   }
+  if (lower.includes("coratia")) {
+    return "Coratia";
+  }
   if (lower.includes("handbag") || lower.includes("purse")) {
     return "Handbags / Purse";
   }

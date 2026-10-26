@@ -25,6 +25,7 @@ const navLinks = [
   { href: "/products?category=Fancy Wear", label: "Fancy Wear" },
   { href: "/products?category=Unstitched", label: "Unstitched" },
   { href: "/products?category=Jewelry", label: "Jewelry" },
+  { href: "/products?category=Coratia", label: "Coratia" },
   { href: "/products?category=Handbags / Purse", label: "Handbags / Purse" },
   { href: "/orders", label: "My Orders" },
   { href: "/about", label: "About" },
@@ -137,7 +138,7 @@ export function Navbar() {
   const cartCount = getCartCount(cart);
 
   const shippingMessage =
-    "Delivery charges Rs.200 Nationwide • Ready-to-Wear and Unstitched Orders: 5 working days";
+    "Delivery charges Rs.300 Nationwide • Ready-to-Wear and Unstitched Orders: 5 working days";
 
   return (
     <>
