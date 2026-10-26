@@ -35,7 +35,7 @@ export const STORE_CATEGORIES = [
   "Fancy Wear",
   "Unstitched",
   "Jewelry",
-  "Coratia",
+  "Coratia Designs",
   "Handbags / Purse",
 ] as const;
 

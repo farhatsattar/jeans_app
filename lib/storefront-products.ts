@@ -1,6 +1,7 @@
 import { getAllProducts, getProduct } from "@/lib/firebase/products";
 import { Product as AdminProduct } from "@/types/admin";
 import { Product as StoreProduct, products as fallbackProducts } from "@/lib/products";
+import { normalizeProductCategory } from "@/lib/product-categories";
 
 function toStoreProduct(product: AdminProduct): StoreProduct {
   const createdAt = new Date(product.createdAt);
@@ -18,7 +19,7 @@ function toStoreProduct(product: AdminProduct): StoreProduct {
   return {
     id: product.id,
     name: product.name,
-    category: product.category,
+    category: normalizeProductCategory(product.category) as StoreProduct["category"],
     price: product.discountPrice ?? product.price,
     description: product.description,
     images: validImages.length > 0 ? validImages : ["/images/image.jpg"],

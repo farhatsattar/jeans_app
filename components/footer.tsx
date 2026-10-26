@@ -115,7 +115,7 @@ export function Footer() {
       { label: "Fancy Wear", href: "/products?category=Fancy Wear" },
       { label: "Unstitched", href: "/products?category=Unstitched" },
       { label: "Jewelry", href: "/products?category=Jewelry" },
-      { label: "Coratia", href: "/products?category=Coratia" },
+      { label: "Coratia Designs", href: "/products?category=Coratia Designs" },
       { label: "Handbags / Purse", href: "/products?category=Handbags / Purse" },
     ],
     Company: [
@@ -149,7 +149,7 @@ export function Footer() {
             <p className="mt-4 text-sm leading-6 text-gray-400">
               Premium Pakistani stitched clothes since 2020.
               Shop Winter Collection, Cotton Elegant Embroidery Suit, Jeans / Trousers, Fancy Wear,
-              Unstitched, Jewelry, Coratia and Handbags with Haa-Meem.
+              Unstitched, Jewelry, Coratia Designs and Handbags with Haa-Meem.
             </p>
           </div>
 

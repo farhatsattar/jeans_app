@@ -3,7 +3,7 @@ import type { ProductCategory } from "@/types/admin";
 /** Jewelry-only delivery */
 export const JEWELRY_DELIVERY = 100;
 
-/** Cloth, Coratia, Handbags / Purse */
+/** Cloth, Coratia Designs, Handbags / Purse */
 export const CLOTH_DELIVERY = 200;
 
 const CLOTH_RATE_CATEGORIES: ReadonlySet<string> = new Set([
@@ -13,6 +13,7 @@ const CLOTH_RATE_CATEGORIES: ReadonlySet<string> = new Set([
   "Fancy Wear",
   "Unstitched",
   "Coratia",
+  "Coratia Designs",
   "Handbags / Purse",
 ]);
 

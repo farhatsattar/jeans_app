@@ -27,7 +27,7 @@ export function getReviewCategoryLabel(
     return "Jewelry";
   }
   if (lower.includes("coratia")) {
-    return "Coratia";
+    return "Coratia Designs";
   }
   if (lower.includes("handbag") || lower.includes("purse")) {
     return "Handbags / Purse";

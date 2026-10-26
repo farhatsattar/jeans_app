@@ -129,13 +129,13 @@ export default function ProductDetailPage() {
         <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
           {/* Ambreen-style media gallery */}
           <div className="space-y-4">
-            <div className="relative aspect-[3/4] overflow-hidden bg-muted/40">
+            <div className="relative aspect-[3/4] w-full overflow-hidden bg-muted/40">
               <Image
                 src={galleryImages[selectedImage]}
                 alt={product.name}
                 fill
                 priority
-                className={`object-contain p-2 ${isSoldOut ? "opacity-60" : ""}`}
+                className={`object-cover object-center ${isSoldOut ? "opacity-60" : ""}`}
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
 
@@ -194,7 +194,7 @@ export default function ProductDetailPage() {
                       src={image}
                       alt={`${product.name} ${index + 1}`}
                       fill
-                      className="object-contain p-1"
+                      className="object-cover object-center"
                       sizes="120px"
                     />
                   </button>

@@ -47,10 +47,10 @@ export const sampleCategories: Omit<Category, "id" | "createdAt">[] = [
     description: "Elegant jewelry sets for parties, bridal and festive looks",
   },
   {
-    name: "Coratia",
-    slug: "coratia",
-    image: "/images/jewelry-pearl-set.jpg",
-    description: "Coratia collection — accessories without size selection",
+    name: "Coratia Designs",
+    slug: "coratia-designs",
+    image: "/images/coratia.png",
+    description: "Handmade crochet roses and Coratia Designs — no size selection",
   },
   {
     name: "Handbags / Purse",

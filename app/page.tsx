@@ -13,7 +13,7 @@ const categories = [
   { name: "Fancy Wear", image: "/images/images%20(2).jfif" },
   { name: "Unstitched", image: "/images/images3.jfif" },
   { name: "Jewelry", image: "/images/jewelry-pearl-set.jpg" },
-  { name: "Coratia", image: "/images/jewelry-pearl-set.jpg" },
+  { name: "Coratia Designs", image: "/images/coratia.png" },
   { name: "Handbags / Purse", image: "/images/handbag-black.jpg" },
 ];
 
@@ -48,7 +48,7 @@ export default function Home() {
         <div className="mb-12 text-center">
           <h2 className="text-3xl font-semibold tracking-tight">Shop Collections</h2>
           <p className="mt-3 text-muted-foreground">
-            Every category in its own section — Jewelry, Coratia, handbags, and more
+            Every category in its own section — Jewelry, Coratia Designs, handbags, and more
           </p>
         </div>
         <CategoryProductSections />

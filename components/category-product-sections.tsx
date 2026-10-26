@@ -7,7 +7,10 @@ import { ArrowRight } from "lucide-react";
 
 import { ProductCard } from "@/components/product-card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PRODUCT_CATEGORIES } from "@/lib/product-categories";
+import {
+  PRODUCT_CATEGORIES,
+  normalizeProductCategory,
+} from "@/lib/product-categories";
 import { Product } from "@/lib/products";
 import { fetchStoreProducts } from "@/lib/storefront-products";
 
@@ -20,12 +23,14 @@ const categoryCopy: Partial<Record<(typeof PRODUCT_CATEGORIES)[number], string>>
   "Fancy Wear": "Festive pieces for weddings and celebrations.",
   Unstitched: "Unstitched fabrics ready for your tailor.",
   Jewelry: "Finishing touches for every outfit.",
-  Coratia: "Curated Coratia pieces for your collection.",
+  "Coratia Designs": "Handmade crochet roses and delicate Coratia Designs pieces.",
   "Handbags / Purse": "Bags and purses for day to night.",
 };
 
 function pickCategoryProducts(products: Product[], category: string): Product[] {
-  const inCategory = products.filter((p) => p.category === category);
+  const inCategory = products.filter(
+    (p) => normalizeProductCategory(p.category) === category
+  );
   const featured = inCategory.filter((p) => p.isFeatured);
   const rest = inCategory.filter((p) => !p.isFeatured);
   return [...featured, ...rest].slice(0, PER_SECTION);
@@ -55,7 +60,9 @@ export function CategoryProductSections() {
       PRODUCT_CATEGORIES.map((category) => ({
         category,
         items: pickCategoryProducts(products, category),
-        total: products.filter((p) => p.category === category).length,
+        total: products.filter(
+          (p) => normalizeProductCategory(p.category) === category
+        ).length,
       })).filter((section) => section.items.length > 0),
     [products]
   );
@@ -132,7 +139,7 @@ export function CategoryProductSections() {
             {section.items.map((product) => (
               <div
                 key={product.id}
-                className="w-[78%] max-w-[280px] shrink-0 snap-start sm:w-auto sm:max-w-none sm:shrink"
+                className="h-full w-[78%] max-w-[280px] shrink-0 snap-start sm:w-auto sm:max-w-none sm:shrink"
               >
                 <ProductCard product={product} />
               </div>

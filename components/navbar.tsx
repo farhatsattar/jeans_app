@@ -25,7 +25,7 @@ const navLinks = [
   { href: "/products?category=Fancy Wear", label: "Fancy Wear" },
   { href: "/products?category=Unstitched", label: "Unstitched" },
   { href: "/products?category=Jewelry", label: "Jewelry" },
-  { href: "/products?category=Coratia", label: "Coratia" },
+  { href: "/products?category=Coratia Designs", label: "Coratia Designs" },
   { href: "/products?category=Handbags / Purse", label: "Handbags / Purse" },
   { href: "/orders", label: "My Orders" },
   { href: "/about", label: "About" },
@@ -138,7 +138,7 @@ export function Navbar() {
   const cartCount = getCartCount(cart);
 
   const shippingMessage =
-    "Delivery: Cloth, Coratia & Handbags Rs.200 • Jewelry Rs.100 • Orders: 5 working days";
+    "Delivery: Cloth, Coratia Designs & Handbags Rs.200 • Jewelry Rs.100 • Orders: 5 working days";
 
   return (
     <>

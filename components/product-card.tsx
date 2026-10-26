@@ -16,15 +16,15 @@ export function ProductCard({ product }: { product: Product }) {
     <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.2 }} className="h-full">
       <div className="group flex h-full flex-col rounded-xl border bg-white shadow-sm transition-all duration-300 hover:shadow-lg dark:bg-card">
         <Link href={`/products/${product.id}`} className="block">
-          <div className="relative aspect-[3/4] w-full overflow-hidden rounded-t-xl bg-muted/30">
+          <div className="relative aspect-[3/4] w-full shrink-0 overflow-hidden rounded-t-xl bg-muted/30">
             <Image
               src={product.images[0] || "/images/image.jpg"}
               alt={product.name}
               fill
-              className={`object-contain object-center transition-transform duration-300 group-hover:scale-[1.02] ${
+              className={`object-cover object-center transition-transform duration-300 ease-out group-hover:scale-[1.03] ${
                 isSoldOut ? "opacity-60" : ""
               }`}
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              sizes="(max-width: 640px) 78vw, (max-width: 1024px) 50vw, 25vw"
             />
 
             {product.isNew && !isSoldOut && (
