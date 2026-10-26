@@ -18,6 +18,7 @@ import {
   getCartTotal,
   useShopStore,
 } from "@/store/use-shop-store";
+import { getCartDelivery } from "@/lib/delivery";
 
 export function CartDrawer() {
   const cart = useShopStore((state) => state.cart);
@@ -29,6 +30,7 @@ export function CartDrawer() {
 
   const total = getCartTotal(cart);
   const count = getCartCount(cart);
+  const delivery = getCartDelivery(cart);
 
   return (
     <Sheet open={isCartOpen} onOpenChange={setCartOpen}>
@@ -158,7 +160,7 @@ export function CartDrawer() {
                 </span>
               </div>
               <p className="mb-3 text-xs text-muted-foreground">
-                Delivery Rs.300 added at checkout.
+                Delivery Rs.{delivery} added at checkout.
               </p>
 
               <Button

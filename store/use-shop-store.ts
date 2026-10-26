@@ -10,6 +10,8 @@ export interface CartItem {
   image: string;
   size: string;
   quantity: number;
+  /** Used for category-based delivery (cloth/coratia 200, jewelry 150). */
+  category?: string;
 }
 
 interface ShopState {
@@ -51,6 +53,7 @@ export const useShopStore = create<ShopState>()(
                   ? {
                       ...cartItem,
                       quantity: cartItem.quantity + quantityToAdd,
+                      category: cartItem.category ?? item.category,
                     }
                   : cartItem
               )
@@ -63,6 +66,7 @@ export const useShopStore = create<ShopState>()(
                   image: item.image,
                   size: item.size,
                   quantity: quantityToAdd,
+                  category: item.category,
                 },
               ];
 

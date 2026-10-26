@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight, Loader2, Minus, Plus } from "lucide-react";
 import { Product, ProductSize } from "@/lib/products";
 import { fetchStoreProduct, fetchStoreProducts } from "@/lib/storefront-products";
 import { isNoSizeCategory } from "@/lib/product-categories";
+import { deliveryLabelForCategory } from "@/lib/delivery";
 import { Button } from "@/components/ui/button";
 import { SizeChart } from "@/components/size-chart";
 import { ProductCard } from "@/components/product-card";
@@ -116,6 +117,7 @@ export default function ProductDetailPage() {
         image: product.images[0],
         size: isNoSizeCategory(product.category) ? "One Size" : size,
         quantity: Math.min(quantity, maxQuantity),
+        category: product.category,
       },
       { openDrawer: true }
     );
@@ -220,7 +222,7 @@ export default function ProductDetailPage() {
                 </span>
               ) : (
                 <span className="text-sm font-medium text-muted-foreground">
-                  Delivery Rs.300
+                  {deliveryLabelForCategory(product.category)}
                 </span>
               )}
             </div>

@@ -20,6 +20,7 @@ import {
   getCartTotal,
   useShopStore,
 } from "@/store/use-shop-store";
+import { getCartDelivery } from "@/lib/delivery";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -29,7 +30,7 @@ export default function CheckoutPage() {
 
   const total = getCartTotal(cart);
   const count = getCartCount(cart);
-  const shipping = 300;
+  const shipping = getCartDelivery(cart);
   const finalTotal = total + shipping;
 
   const [isSubmitting, setIsSubmitting] = useState(false);

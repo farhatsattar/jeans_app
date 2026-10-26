@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { HeroCarousel, type HeroSlide } from "@/components/hero-carousel";
-import { FeaturedProducts } from "@/components/featured-products";
+import { CategoryProductSections } from "@/components/category-product-sections";
 import { HomeReviews } from "@/components/home-reviews";
 import { MoreCollectionsButton } from "@/components/more-collections-button";
 
@@ -46,31 +46,32 @@ export default function Home() {
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h2 className="text-3xl font-semibold tracking-tight">Featured Products</h2>
-          <p className="mt-3 text-muted-foreground">Discover our latest collection of premium Pakistani clothes</p>
+          <h2 className="text-3xl font-semibold tracking-tight">Shop Collections</h2>
+          <p className="mt-3 text-muted-foreground">
+            Every category in its own section — Jewelry, Coratia, handbags, and more
+          </p>
         </div>
-        <FeaturedProducts />
+        <CategoryProductSections />
       </section>
 
       <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
-        <h2 className="mb-8 text-3xl font-semibold text-center">Shop by Category</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <h2 className="mb-8 text-center text-3xl font-semibold">Browse by Category</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {categories.map((category) => (
             <Link
               key={category.name}
-              href={`/products?category=${category.name}`}
-              className="group relative overflow-hidden rounded-xl"
+              href={`/products?category=${encodeURIComponent(category.name)}`}
+              className="group relative aspect-[3/4] overflow-hidden rounded-xl active:scale-[0.98]"
             >
-              <div className="aspect-[3/4]">
-                <Image
-                  src={category.image}
-                  alt={category.name}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
-              <span className="absolute bottom-4 left-1/2 -translate-x-1/2 text-lg font-medium text-white drop-shadow-lg">
+              <Image
+                src={category.image}
+                alt={category.name}
+                fill
+                className="object-cover transition-transform duration-300 ease-out group-hover:scale-[1.03]"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              />
+              <div className="absolute inset-0 bg-black/25 transition-colors duration-200 ease-out group-hover:bg-black/15" />
+              <span className="absolute bottom-4 left-1/2 w-[90%] -translate-x-1/2 text-center text-base font-medium text-white drop-shadow-lg">
                 {category.name}
               </span>
             </Link>
