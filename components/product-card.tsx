@@ -7,16 +7,24 @@ import { ShoppingCart } from "lucide-react";
 import { Product } from "@/lib/products";
 import { Button } from "@/components/ui/button";
 
+/** Fixed image box — every card uses the same size (portrait frame). */
+const IMAGE_BOX =
+  "relative h-[280px] w-full shrink-0 overflow-hidden rounded-t-xl bg-muted/40 sm:h-[300px]";
+
 export function ProductCard({ product }: { product: Product }) {
   const isSoldOut =
     Boolean(product.isSoldOut) ||
     (typeof product.stock === "number" && product.stock <= 0);
 
   return (
-    <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.2 }} className="h-full">
-      <div className="group flex h-full flex-col rounded-xl border bg-white shadow-sm transition-all duration-300 hover:shadow-lg dark:bg-card">
-        <Link href={`/products/${product.id}`} className="block">
-          <div className="relative aspect-[3/4] w-full shrink-0 overflow-hidden rounded-t-xl bg-muted/30">
+    <motion.div
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+      className="h-full w-full"
+    >
+      <div className="group flex h-full w-full flex-col overflow-hidden rounded-xl border bg-white shadow-sm transition-shadow duration-200 ease-out hover:shadow-lg dark:bg-card">
+        <Link href={`/products/${product.id}`} className="block w-full shrink-0">
+          <div className={IMAGE_BOX}>
             <Image
               src={product.images[0] || "/images/image.jpg"}
               alt={product.name}
@@ -24,7 +32,7 @@ export function ProductCard({ product }: { product: Product }) {
               className={`object-cover object-center transition-transform duration-300 ease-out group-hover:scale-[1.03] ${
                 isSoldOut ? "opacity-60" : ""
               }`}
-              sizes="(max-width: 640px) 78vw, (max-width: 1024px) 50vw, 25vw"
+              sizes="(max-width: 640px) 260px, (max-width: 1024px) 50vw, 280px"
             />
 
             {product.isNew && !isSoldOut && (
@@ -41,14 +49,16 @@ export function ProductCard({ product }: { product: Product }) {
           </div>
         </Link>
 
-        <div className="flex flex-1 flex-col gap-3 p-4">
+        <div className="flex min-h-[140px] flex-1 flex-col gap-2 p-4">
           <Link href={`/products/${product.id}`} className="block">
-            <h3 className="min-h-[3rem] text-base font-medium leading-snug text-foreground transition-colors group-hover:text-primary">
+            <h3 className="line-clamp-2 min-h-[2.75rem] text-base font-medium leading-snug text-foreground transition-colors group-hover:text-primary">
               {product.name}
             </h3>
           </Link>
 
-          <p className="text-xs text-muted-foreground">{product.category}</p>
+          <p className="line-clamp-1 text-xs text-muted-foreground">
+            {product.category}
+          </p>
 
           <div className="mt-auto flex items-center justify-between gap-3 pt-1">
             <p className="shrink-0 font-semibold text-foreground">
@@ -62,7 +72,7 @@ export function ProductCard({ product }: { product: Product }) {
               <Button
                 size="sm"
                 asChild
-                className="rounded-full bg-black text-white hover:bg-black/90"
+                className="rounded-full bg-black text-white hover:bg-black/90 active:scale-[0.97]"
               >
                 <Link href={`/products/${product.id}`}>
                   <ShoppingCart className="mr-1.5 size-4" />

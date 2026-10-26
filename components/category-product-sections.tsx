@@ -134,12 +134,12 @@ export function CategoryProductSections() {
             </Link>
           </div>
 
-          {/* Mobile: snap row; Desktop: grid */}
-          <div className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-2 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 sm:snap-none lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
+          {/* Mobile: equal-width snap cards; Desktop: equal grid */}
+          <div className="-mx-4 flex items-stretch gap-4 overflow-x-auto px-4 pb-2 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 sm:snap-none lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
             {section.items.map((product) => (
               <div
                 key={product.id}
-                className="h-full w-[78%] max-w-[280px] shrink-0 snap-start sm:w-auto sm:max-w-none sm:shrink"
+                className="w-[260px] shrink-0 snap-start sm:w-auto sm:min-w-0"
               >
                 <ProductCard product={product} />
               </div>

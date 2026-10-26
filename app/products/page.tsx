@@ -66,13 +66,15 @@ export default function ProductsPage() {
             }}
           />
         </aside>
-        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid auto-rows-fr gap-6 sm:grid-cols-2 xl:grid-cols-3">
           {loading
             ? Array.from({ length: 6 }).map((_, index) => (
-                <Skeleton key={index} className="h-96 w-full" />
+                <Skeleton key={index} className="h-[440px] w-full" />
               ))
             : filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <div key={product.id} className="min-w-0">
+                  <ProductCard product={product} />
+                </div>
               ))}
         </div>
       </div>

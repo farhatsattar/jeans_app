@@ -129,7 +129,7 @@ export default function ProductDetailPage() {
         <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
           {/* Ambreen-style media gallery */}
           <div className="space-y-4">
-            <div className="relative aspect-[3/4] w-full overflow-hidden bg-muted/40">
+            <div className="relative h-[420px] w-full overflow-hidden bg-muted/40 sm:h-[520px] lg:h-[560px]">
               <Image
                 src={galleryImages[selectedImage]}
                 alt={product.name}
