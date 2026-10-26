@@ -138,7 +138,7 @@ export function Navbar() {
   const cartCount = getCartCount(cart);
 
   const shippingMessage =
-    "Delivery: Cloth & Coratia Rs.200 • Jewelry Rs.150 • Orders: 5 working days";
+    "Delivery: Cloth, Coratia & Handbags Rs.200 • Jewelry Rs.100 • Orders: 5 working days";
 
   return (
     <>

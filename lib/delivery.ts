@@ -1,18 +1,19 @@
 import type { ProductCategory } from "@/types/admin";
 
-/** Jewelry delivery */
-export const JEWELRY_DELIVERY = 150;
+/** Jewelry-only delivery */
+export const JEWELRY_DELIVERY = 100;
 
-/** Cloth + Coratia delivery */
+/** Cloth, Coratia, Handbags / Purse */
 export const CLOTH_DELIVERY = 200;
 
-const CLOTH_OR_CORATIA: ReadonlySet<string> = new Set([
+const CLOTH_RATE_CATEGORIES: ReadonlySet<string> = new Set([
   "Winter Collection",
   "Cotton Elegant Embroidery Suit",
   "Jeans / Trousers",
   "Fancy Wear",
   "Unstitched",
   "Coratia",
+  "Handbags / Purse",
 ]);
 
 export function getDeliveryForCategory(
@@ -20,9 +21,7 @@ export function getDeliveryForCategory(
 ): number {
   if (!category) return CLOTH_DELIVERY;
   if (category === "Jewelry") return JEWELRY_DELIVERY;
-  if (CLOTH_OR_CORATIA.has(category)) return CLOTH_DELIVERY;
-  // Handbags / Purse and any other category
-  if (category === "Handbags / Purse") return JEWELRY_DELIVERY;
+  if (CLOTH_RATE_CATEGORIES.has(category)) return CLOTH_DELIVERY;
   return CLOTH_DELIVERY;
 }
 
